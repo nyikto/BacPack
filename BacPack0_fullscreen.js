@@ -449,6 +449,7 @@ function createTestButton(x, y, width, height, bac) {
     	w.image.setAutoRaiseToTop(false);
     	w.addChild(w.image);
     	w.image.raiseToTop();
+    	console.log("hello");
 	}
 
 	w.reaction = new MultiWidgets.ImageWidget();
