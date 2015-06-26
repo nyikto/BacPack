@@ -216,17 +216,7 @@ function createWorkbench(width, height, theme) {
 	}
 
 
-	w.smallPetriDish = new MultiWidgets.ImageWidget();
-
-	if (w.smallPetriDish.load("bacplate.png")) {
-		    w.smallPetriDish.addOperator(new MultiWidgets.StayInsideParentOperator());
-	    	w.smallPetriDish.resizeToFit(new Nimble.SizeF(w.width() / 8, w.width() / 8));
-	    	w.smallPetriDish.setLocation(w.width() / 3, 3 * w.height() / 4)
-	    	w.smallPetriDish.setFixed();
-	    	w.smallPetriDish.setAutoRaiseToTop(false);
-	    	w.addChild(w.smallPetriDish);
-	    	w.smallPetriDish.raiseToTop();
-	}
+	w.smallPetriDish = createSmallPetriDish(w.width() / 3, 3 * w.height() / 4, w.width() / 8, w.width() / 8);;
 
 	w.bigPetriDish = new MultiWidgets.ImageWidget();
 
@@ -246,7 +236,7 @@ function createWorkbench(width, height, theme) {
 	if (w.iGEMbutton.load("iGEM.png")) {
 		    // w.iGEMbutton.addOperator(new MultiWidgets.StayInsideParentOperator());
 	    	w.iGEMbutton.resizeToFit(new Nimble.SizeF(w.width() / 9, w.width() / 9));
-	    	w.iGEMbutton.setLocation(9* w.width() / 10, 4 * w.height() / 5)
+	    	w.iGEMbutton.setLocation(9* w.width() / 10, 18 * w.height() / 20)
 	    	w.iGEMbutton.setFixed();
 	    	w.iGEMbutton.setAutoRaiseToTop(false);
 	    	w.addChild(w.iGEMbutton);
@@ -279,7 +269,7 @@ function createWorkbench(width, height, theme) {
 	if (w.resetButton.load("reset.png")) {
 		    w.resetButton.addOperator(new MultiWidgets.StayInsideParentOperator());
 	    	w.resetButton.resizeToFit(new Nimble.SizeF(w.width() / 10, w.width() / 10));
-	    	w.resetButton.setLocation(9* w.width() / 10, 6 * w.height() / 10);
+	    	w.resetButton.setLocation(9 * w.width() / 10, 4 * w.height() / 5);
 	    	w.resetButton.setFixed();
 	    	w.resetButton.setAutoRaiseToTop(false);
 	    	w.addChild(w.resetButton);
@@ -305,15 +295,41 @@ function createWorkbench(width, height, theme) {
 	}
 
 
-	//w.moveBac = createSmallBacterium(w.smallPetriDish.x(), w.smallPetriDish.y(), w.smallPetriDish.width() / 4, w.smallPetriDish.height() / 4, true);
-	w.moveBac = createSmallBacterium(w.smallPetriDish.width() / 2, w.smallPetriDish.height() / 2, w.smallPetriDish.width() / 4, w.smallPetriDish.height() / 4, true);
-	w.smallPetriDish.addChild(w.moveBac);
-	w.moveBac.raiseToTop();
+	w.smallBac = createSmallBacterium(w.smallPetriDish.width() / 3, w.smallPetriDish.height() / 3, w.smallPetriDish.width() / 2, w.smallPetriDish.height() / 2, true);
+	w.smallPetriDish.addChild(w.smallBac);
+	w.smallBac.raiseToTop();
 
 	w.bigBac = createBigBacterium(w.bigPetriDish.width() / 2 - (2 * w.bigPetriDish.width() / 5), w.bigPetriDish.height() / 2 - (2 * w.bigPetriDish.height() / 5), 4 * w.bigPetriDish.width() / 5, 4 * w.bigPetriDish.height() / 5);
 	w.bigPetriDish.addChild(w.bigBac);
 	w.bigBac.raiseToTop();
 
+	return w;
+}
+
+function createSmallPetriDish(x, y, width, height) {
+	var w = new MultiWidgets.JavaScriptWidget();
+
+	w.setWidth(width);
+	w.setHeight(height);
+	w.setAllowRotation(false);
+	w.setLocation(x, y);
+	w.setBackgroundColor(0, 0, 0, 0);
+	w.setAutoRaiseToTop(false);
+
+	w.image = new MultiWidgets.ImageWidget();
+
+	if (w.image.load("bacplate.png")) {
+    	w.image.resizeToFit(new Nimble.SizeF(w.width(), w.width()));
+    	w.image.setLocation(0, 0);
+    	w.image.setFixed();
+    	w.addChild(w.image);
+    	w.image.raiseToTop();	
+    	w.setAutoRaiseToTop(false);
+	}
+
+	w.onUpdate(function(frameInfo) {
+		w.setScale(1);
+	});
 
 	return w;
 }
@@ -335,7 +351,6 @@ function createSmallBacterium(x, y, width, height, moveable) {
 	    w.image.addOperator(new MultiWidgets.StayInsideParentOperator());
     	w.image.resizeToFit(new Nimble.SizeF(w.width(), w.height()));
     	w.image.setFixed();
-    	w.image.setAutoRaiseToTop(false);
     	w.addChild(w.image);
     	w.image.raiseToTop();
 	}
@@ -371,7 +386,7 @@ function createBigBacterium(x, y, width, height) {
 	w.textW = new MultiWidgets.TextWidget();
 
 	w.textW.setWidth(width);
-	w.textW.setHeight(height);
+	w.textW.setHeight(height / 2);
 	w.textW.setLocation(0, height);
 	w.textW.setBackgroundColor(1, 0, 1, 0.5);
 	w.textW.setFontSize(20);
@@ -396,7 +411,6 @@ function createBigBacterium(x, y, width, height) {
 			}
 			var text = "If " + genes[ifGene - 1] + ", this bacteria makes " + genes[thenGene - 1] + "!";
 			w.textW.setText(text);
-			w.image.addChild(w.textW);
 			w.hasPlasmid = true;
 			displayContextMenu();
 
@@ -416,18 +430,35 @@ function createBigBacterium(x, y, width, height) {
 		w.markers.pop(w.markers.indexOf(marker), 1);
 	});
 
+	w.testButton = createTestButton(- w.width() / 3, - w.width() / 3, w.width() / 3, w.width() / 3, w);
+	w.infoButton = createInfoButton(w.width() / 2 - w.width() / 6, - 2 * w.width() / 3, w.width() / 3, w.width() / 3, w);
+	w.clearButton = createClearButton(w.width(), - w.width() / 3, w.width() / 3, w.width() / 3, w);
+
 	return w;
 }
 
 function displayContextMenu() {
 	var wb = topScene.workbench;
 	var bac = wb.bigBac;
+	wb.addChild(wb.smallPetriDish);
+	wb.smallPetriDish.raiseToTop();
+	bac.image.addChild(bac.textW);
 	wb.addChild(topScene.workbench.leftArrow);
 	wb.leftArrow.raiseToTop();
-	// bac.addChild(createScanner(bac.width(), 0, bac.width() / 2, bac.width() / 2));
-	bac.addChild(createTestButton(- bac.width() / 3, - bac.width() / 3, bac.width() / 3, bac.width() / 3, bac));
-	bac.addChild(createInfoButton(bac.width() / 2 - bac.width() / 6, - 2 * bac.width() / 3, bac.width() / 3, bac.width() / 3, bac));
-	bac.addChild(createClearButton(bac.width(), - bac.width() / 3, bac.width() / 3, bac.width() / 3, bac));
+	bac.addChild(bac.testButton);
+	bac.addChild(bac.infoButton);
+	bac.addChild(bac.clearButton);
+}
+
+function hideContextMenu() {
+	var wb = topScene.workbench;
+	var bac = wb.bigBac;
+	wb.removeChild(wb.smallPetriDish);
+	bac.image.removeChild(bac.textW);
+	wb.removeChild(topScene.workbench.leftArrow);
+	bac.removeChild(bac.testButton);
+	bac.removeChild(bac.infoButton);
+	bac.removeChild(bac.clearButton);
 }
 
 function createTestButton(x, y, width, height, bac) {
@@ -449,7 +480,6 @@ function createTestButton(x, y, width, height, bac) {
     	w.image.setAutoRaiseToTop(false);
     	w.addChild(w.image);
     	w.image.raiseToTop();
-    	console.log("hello");
 	}
 
 	w.reaction = new MultiWidgets.ImageWidget();
@@ -522,7 +552,7 @@ function createClearButton(x, y, width, height, bac) {
 	}
 
 	w.onSingleTap(function() {
-		console.log("cleared");
+		hideContextMenu();
 	});
 
 	return w;
