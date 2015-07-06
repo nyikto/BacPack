@@ -26,6 +26,7 @@ var topScene = createScene(root.width(), root.height(), 0);
 
 root.addChild(topScene);
 
+
 function createScene(width, height, theme) {
 	var w = new MultiWidgets.JavaScriptWidget();
 
@@ -123,6 +124,28 @@ function createEnvironment(width, height, theme) {
 	w.friend = createFriend(w.width()/4, w.height()/3, w.width()/3, w.width()/3, theme);
 	w.addChild(w.friend);
 	w.friend.raiseToTop();
+
+	w.fires = [];
+
+	w.background.onMarkerDown(function(id_as_string) {
+		var idAsInt = parseInt(id_as_string);
+		var gm = $.app.grabManager();
+		var marker = gm.findMarker(idAsInt);
+		console.log(marker.code());
+		var fire = createFire(marker.centerLocation().x, marker.centerLocation().y, w.width() / 7, w.width() / 7);
+		w.addChild(fire);
+		fire.raiseToTop();
+		w.fires.push(fire);
+	});
+
+	w.onUpdate(function(frameInfo) {
+		for (var i = 0; i < w.fires.length; i++) {
+			if (!w.fires[i].animation.isPlaying()) {
+				w.removeChild(w.fires[i]);
+				w.fires.splice(i, 0);
+			}
+		}
+	});
 
 
 	return w;
@@ -303,6 +326,10 @@ function createWorkbench(width, height, theme) {
 	w.bigPetriDish.addChild(w.bigBac);
 	w.bigBac.raiseToTop();
 
+	w.fire = createFire(w.width() / 2, w.height() / 2, w.width() / 5, w.width() / 5);
+	w.addChild(w.fire);
+	w.fire.raiseToTop();
+
 	return w;
 }
 
@@ -482,17 +509,27 @@ function createTestButton(x, y, width, height, bac) {
     	w.image.raiseToTop();
 	}
 
-	w.reaction = new MultiWidgets.ImageWidget();
+	// w.reaction = new MultiWidgets.ImageWidget();
 
-	if (w.reaction.load("sciencedog.png")) {
-		console.log("registered science");
-    	w.reaction.resizeToFit(new Nimble.SizeF(bac.width(), bac.width()));
-    	w.reaction.setLocation(0, bac.height());
-    	w.reaction.setFixed();
-    	w.reaction.setAutoRaiseToTop(false);
-	}
+	// if (w.reaction.load("sciencedog.png")) {
+	// 	console.log("registered science");
+ //    	w.reaction.resizeToFit(new Nimble.SizeF(bac.width(), bac.width()));
+ //    	w.reaction.setLocation(0, bac.height());
+ //    	w.reaction.setFixed();
+ //    	w.reaction.setAutoRaiseToTop(false);
+	// }
 
-	w.onSingleTap(function() {
+	w.reaction = createFire(0, bac.height(), bac.width(), bac.width());
+
+	w.onUpdate(function(frameInfo) {
+		if (!w.reaction.animation.isPlaying()) {
+			bac.removeChild(w.reaction);
+			w.reaction = createFire(0, bac.height(), bac.width(), bac.width());
+		} 
+	});
+
+	w.image.onSingleTap(function() {
+		console.log("registered test tap");
     	bac.addChild(w.reaction);
     	w.reaction.raiseToTop();
 	});
@@ -551,7 +588,7 @@ function createClearButton(x, y, width, height, bac) {
     	w.image.raiseToTop();
 	}
 
-	w.onSingleTap(function() {
+	w.image.onSingleTap(function() {
 		hideContextMenu();
 	});
 
@@ -648,5 +685,54 @@ function createScanner(x, y, width, height) {
 	});
 
 	return w;
+}
+
+function createFire(x, y, width, height) {
+
+	var w = new MultiWidgets.JavaScriptWidget();
+
+	w.setLocation(x, y);
+	w.setWidth(width);
+	w.setHeight(height);
+	w.setAllowRotation(false);
+	w.setFixed();
+	w.setBackgroundColor(0, 0, 0, 0);
+
+	w.animation = new MultiWidgets.ImageMovieWidget();
+
+	if (w.animation.load("fire")) {
+	    w.animation.addOperator(new MultiWidgets.StayInsideParentOperator());
+    	w.animation.setFixed();
+    	w.animation.setAutoRaiseToTop(false);
+    	w.animation.setLoopMode(MultiWidgets.ImageMovieWidget.LoopMode.NO_LOOP);
+    	w.addChild(w.animation);
+    	w.animation.raiseToTop();
+	}
+
+	return w;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }
 

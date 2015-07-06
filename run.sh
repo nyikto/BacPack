@@ -1,3 +1,3 @@
 #!/bin/bash
 
-source `dirname "$0"`/../common.sh BacPack0_fullscreen.js $@
+source `dirname "$0"`/../common.sh BacPack1.js $@
