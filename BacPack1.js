@@ -21,9 +21,9 @@ const petriDishImage = "dish.png";
 const infoTabImage = "marsinst.jpeg";
 const iGEMTabImage = "iGEM.png";
 
-const distanceToMarsCenter = 644;
+const distanceToMarsCenter = 642;
 const distanceToEdge = rootW / 80;
-
+const midpointX = 954;
 
 var environment = createEnvironment(0, 0);
 root.addChild(environment);
@@ -46,6 +46,18 @@ petri1.raiseToTop();
 petri2.raiseToTop();
 petri3.raiseToTop();
 petri4.raiseToTop();
+
+// var test = new MultiWidgets.JavaScriptWidget();
+
+// test.setFixed();
+// test.setWidth(100);
+// test.setHeight(100);
+// test.setLocation(954 - 50, 642);
+
+// test.setBackgroundColor(1, 1, 1, 0.5);
+
+// root.addChild(test);
+// test.raiseToTop();
 
 // root.addChild(createPetriDish(rootW / 5, rootH / 3, Math.PI / 2));
 // root.addChild(createPetriDish(2 * rootW / 3 - petriDishW / 2, 2 * rootH / 3, 0));
@@ -110,7 +122,14 @@ function createPetriDish(x, y, rotation, flaskSide) {
 
 	w.flaskSide = flaskSide;
 
-	w.xySwapped = (rotation == 0) ? true : false;
+	w.xySwapped;
+	if (rotation == 0) {
+		w.xySwapped = 0;
+	} else if (rotation < Math.PI) {
+		w.xySwapped = 1;
+	} else if (rotation >= Math.PI) {
+		w.xySwapped = -1;
+	}
 
 	w.image = new MultiWidgets.ImageWidget();
 
@@ -197,14 +216,23 @@ function createPetriDish(x, y, rotation, flaskSide) {
 	w.addChild(w.plasmidIndication);
 	w.plasmidIndication.raiseToTop();
 
+	// if (w.flaskSide == 0) {
+	// 	w.clearButton = createClearButton(w, w.width() / 4, w.height() / 4, - w.width() / 4, petriDishW - w.height() / 4);
+	// 	w.infoButton = createInfoButton(w, w.width() / 4, w.height() / 4, - w.width() / 4, petriDishW - w.height() / 4 * 2);
+	// 	w.flask = createFlask(w, w.width() / 2, w.height() / 2, - w.clearButton.width() - w.width() / 2, 0, w.xySwapped);
+	// } else {
+	// 	w.clearButton = createClearButton(w, w.width() / 4, w.height() / 4, petriDishW, petriDishW - w.height() / 4);
+	// 	w.infoButton = createInfoButton(w, w.width() / 4, w.height() / 4, petriDishW, petriDishW - w.height() / 4 * 2);
+	// 	w.flask = createFlask(w, w.width() / 2, w.height() / 2, petriDishW + w.clearButton.width(), 0, w.xySwapped);
+	// }
+
+	w.clearButton = createClearButton(w, w.width() / 4, w.height() / 4, 2 * petriDishW / 3 - petriDishW / 8, - petriDishH / 8);
+	w.infoButton = createInfoButton(w, w.width() / 4, w.height() / 4, w.width() / 3 - petriDishW / 8, - petriDishH / 8);
+
 	if (w.flaskSide == 0) {
-		w.clearButton = createClearButton(w, w.width() / 4, w.height() / 4, - w.width() / 4, petriDishW - w.height() / 4);
-		w.infoButton = createInfoButton(w, w.width() / 4, w.height() / 4, - w.width() / 4, petriDishW - w.height() / 4 * 2);
-		w.flask = createFlask(w, w.width() / 2, w.height() / 2, - w.clearButton.width() - w.width() / 2, 0, w.xySwapped);
+		w.flask = createFlask(w, w.width() / 2, w.height() / 2, - w.width() / 2, 0, w.xySwapped);
 	} else {
-		w.clearButton = createClearButton(w, w.width() / 4, w.height() / 4, petriDishW, petriDishW - w.height() / 4);
-		w.infoButton = createInfoButton(w, w.width() / 4, w.height() / 4, petriDishW, petriDishW - w.height() / 4 * 2);
-		w.flask = createFlask(w, w.width() / 2, w.height() / 2, petriDishW + w.clearButton.width(), 0, w.xySwapped);
+		w.flask = createFlask(w, w.width() / 2, w.height() / 2, petriDishW, 0, w.xySwapped);
 	}
 
 	w.bacBabe = createBacBabe(w, w.width() / 2, w.height() / 2, w.width() / 4, w.height() / 4);
@@ -215,115 +243,6 @@ function createPetriDish(x, y, rotation, flaskSide) {
 
 	return w;
 }
-
-// function createPetriDish(x, y, rotation) {
-
-// 	var w = new MultiWidgets.JavaScriptWidget();
-
-// 	w.setLocation(x, y);
-// 	w.setWidth(petriDishW);
-// 	w.setHeight(petriDishH);
-// 	w.setRotationAboutCenter(rotation);
-// 	w.setFixed();
-
-// 	w.setBackgroundColor(0, 0, 0, 0);
-
-// 	w.image = new MultiWidgets.ImageWidget();
-
-// 	if (w.image.load(petriDishImage)) {
-// 	    w.image.addOperator(new MultiWidgets.StayInsideParentOperator());
-//     	w.image.resizeToFit(new Nimble.SizeF(w.width(), w.height()));
-//     	w.image.setLocation(0, 0);
-//     	w.image.setFixed();
-//     	w.image.setAutoRaiseToTop(false);
-//     	w.addChild(w.image);
-//     	w.image.raiseToTop();
-// 	}
-
-// 	w.markers = [];
-// 	w.hasPlasmid = false;
-// 	w.ifGene = null;
-// 	w.thenGene = null;
-
-// 	w.markerSensor = new MultiWidgets.JavaScriptWidget();
-// 	w.markerSensor.setLocation(0, 0);
-// 	w.markerSensor.setWidth(petriDishW);
-// 	w.markerSensor.setHeight(petriDishH);
-// 	w.markerSensor.setFixed();
-
-// 	w.markerSensor.setBackgroundColor(0, 0, 0, 0);
-
-// 	w.markerSensor.onMarkerDown(function(id_as_string) {
-// 		var idAsInt = parseInt(id_as_string);
-// 		var gm = $.app.grabManager();
-// 		var marker = gm.findMarker(idAsInt);
-// 		w.markers.push(marker);
-
-// 		if (isValidPlasmid(w.markers)) {
-// 			if (codeType(w.markers[0].code()) == 0) {
-// 				w.ifGene = w.markers[0].code();
-// 				w.thenGene = w.markers[1].code();
-// 			} else {
-// 				w.ifGene = w.markers[1].code();
-// 				w.thenGene = w.markers[0].code();
-// 			}
-// 			plasmidInserted(w);
-// 			var text = "If " + genes[w.ifGene - 1] + ", this bacteria makes " + genes[w.thenGene - 1] + "!";
-// 			w.textW.setText(text);
-// 			// displayContextMenu();
-// 		}
-// 	});
-
-// 	w.markerSensor.onMarkerUp(function(id_as_string) {
-// 		var idAsInt = parseInt(id_as_string);
-// 		var gm = $.app.grabManager();
-// 		var marker = gm.findMarker(idAsInt);
-// 		w.markers.pop(w.markers.indexOf(marker), 1);
-// 	});
-
-// 	w.textW = new MultiWidgets.TextWidget();
-
-// 	w.textW.setWidth(w.width());
-// 	w.textW.setHeight(w.height());
-// 	w.textW.setLocation(0, 0);
-// 	w.textW.setBackgroundColor(1, 0, 1, 0.5);
-// 	w.textW.setFontSize(30);
-// 	w.textW.setText("");
-// 	w.textW.setStrokeWidth(1);
-// 	w.textW.setFixed();
-// 	w.textW.setAllowRotation(false);
-
-// 	w.xButton = new MultiWidgets.ImageWidget();
-
-// 	if (w.xButton.load("x.png")) {
-// 	    w.xButton.addOperator(new MultiWidgets.StayInsideParentOperator());
-//     	w.xButton.resizeToFit(new Nimble.SizeF(w.width() / 5, w.height() / 5));
-//     	w.xButton.setLocation(w.width() - w.xButton.width(), 0);
-//     	w.xButton.setFixed();
-//     	w.xButton.setAutoRaiseToTop(false);
-//     	w.textW.addChild(w.xButton);
-//     	w.xButton.raiseToTop();
-// 	}
-
-// 	w.xButton.onSingleTap(function() {
-// 		w.removeChild(w.textW);
-// 		console.log("x button tapped");
-// 	});
-
-// 	w.plasmidIndication = createPlasmidIndication(w.width(), w.height());
-// 	w.addChild(w.plasmidIndication);
-// 	w.plasmidIndication.raiseToTop();
-
-// 	w.clearButton = createClearButton(w, w.width() / 4, w.height() / 4);
-// 	w.infoButton = createInfoButton(w, w.width() / 4, w.height() / 4);
-// 	w.bacBabe = createBacBabe(w, w.width() / 2, w.height() / 4);
-// 	w.flask = createFlask(w, w.width() / 2, w.height() / 2);
-
-// 	w.addChild(w.markerSensor);
-// 	w.markerSensor.raiseToTop();
-
-// 	return w;
-// }
 
 function plasmidInserted(w) {
 	w.removeChild(w.plasmidIndication);
@@ -362,7 +281,7 @@ function createClearButton(petriDish, width, height, x, y) {
 
 	w.image = new MultiWidgets.ImageWidget();
 
-	if (w.image.load("clear.png")) {
+	if (w.image.load("i.png")) {
 	    w.image.addOperator(new MultiWidgets.StayInsideParentOperator());
     	w.image.resizeToFit(new Nimble.SizeF(w.width(), w.height()));
     	w.image.setFixed();
@@ -550,13 +469,49 @@ function createFlask(petriDish, width, height, x, y, xySwapped) {
 		}
 
 		if (w.status == 2) {
-			var dist = 0;
-			if (w.xySwapped) {
-				dist = getDistanceBetween(petriDish.y() + w.y() + w.animation.y() + w.animation.height(), petriDish.x() + w.x() + w.animation.x() + w.animation.width() / 2, 644, 0);
-			} else {
-				dist = getDistanceBetween(petriDish.x() + w.x() + w.animation.x() + w.animation.width() / 2, petriDish.y() + w.y() + w.animation.y() + w.animation.height(), 644, 0);
+			var dist, absoluteX, absoluteY, initialRotation;
+
+			if (w.xySwapped == 1) {
+				absoluteX = petriDish.x() - w.y() - w.animation.y() - w.animation.height();
+				absoluteY = petriDish.y() + w.x() + w.animation.x() + w.animation.width() / 2;
+				initialRotation = Math.PI / 2;
+				dist = getDistanceBetween(absoluteX, absoluteY, midpointX, 0);
 			}
+			else if (w.xySwapped == -1) {
+				absoluteX =petriDish.x() + w.y() + w.animation.y() + w.animation.height();
+				absoluteY = petriDish.y() - w.x() - w.animation.x() - w.animation.width() / 2;
+				initialRotation = 3 * Math.PI / 2;
+				dist = getDistanceBetween(absoluteX, absoluteY, midpointX, 0);
+
+			} else {
+				absoluteX = petriDish.x() + w.x() + w.animation.x() + w.animation.width() / 2;
+				absoluteY = petriDish.y() + w.y() + w.animation.y() + w.animation.height();
+				initialRotation = 0;
+				dist = getDistanceBetween(absoluteX, absoluteY, midpointX, 0);
+			}
+
 			if (dist < distanceToMarsCenter) {
+				var lengthA = absoluteY;
+				var lengthB = midpointX - absoluteX;
+				var theta = Math.atan(lengthA / lengthB);
+				var newRotation = initialRotation - (Math.PI / 2) - theta;
+				w.animation.setRotationAboutCenter(newRotation);
+
+
+
+				console.log(" ");
+				console.log("--------------------------------------");
+				console.log("initialRotation: " + initialRotation);
+				console.log("lengthA: " + lengthA);
+				console.log("lengthB: " + lengthB);
+				console.log("theta: " + theta);
+				console.log("theta (degrees): " + theta * 180 / Math.PI);
+				console.log("newRotation: " + newRotation);
+				console.log("newRotation (degrees): " + newRotation * 180 / Math.PI);
+				console.log("");
+
+
+
 				if (w.animation.load("MARSpour")) {
 					w.animation.raiseToTop();
 					w.animation.play(false);
@@ -575,6 +530,7 @@ function createFlask(petriDish, width, height, x, y, xySwapped) {
 				w.setLocation(w.xOrig, w.yOrig);
 				w.animation.setLocation(0, 0);
 				w.animation.setFixed();
+				w.animation.setRotationAboutCenter(0);
 			}
 			w.status = 0;
 		}
