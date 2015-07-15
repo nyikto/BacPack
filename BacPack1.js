@@ -494,19 +494,21 @@ function createFlask(petriDish, width, height, x, y, xySwapped) {
 				var lengthA = absoluteY;
 				var lengthB = midpointX - absoluteX;
 				var theta = Math.atan(lengthA / lengthB);
-				var newRotation = initialRotation - (Math.PI / 2) - theta;
+				//var newRotation = initialRotation - (Math.PI / 2) - theta;
+				var newRotation = - (theta + ( (- sign(theta)) * (Math.PI / 2))) - (initialRotation);
 				w.animation.setRotationAboutCenter(newRotation);
 
 
 
 				console.log(" ");
 				console.log("--------------------------------------");
-				console.log("initialRotation: " + initialRotation);
+				// console.log("initialRotation: " + initialRotation);
+				console.log("initialRotation (degrees): " + initialRotation * 180 / Math.PI);
 				console.log("lengthA: " + lengthA);
 				console.log("lengthB: " + lengthB);
-				console.log("theta: " + theta);
+				// console.log("theta: " + theta);
 				console.log("theta (degrees): " + theta * 180 / Math.PI);
-				console.log("newRotation: " + newRotation);
+				// console.log("newRotation: " + newRotation);
 				console.log("newRotation (degrees): " + newRotation * 180 / Math.PI);
 				console.log("");
 
@@ -612,6 +614,10 @@ function getDistanceBetween(x1, y1, x2, y2) {
 
 function areSameFloats(f1, f2) {
 	return (Math.abs(f1 - f2) < 10);
+}
+
+function sign(n) {
+	return (n >= 0) ? 1 : -1;
 }
 
 
