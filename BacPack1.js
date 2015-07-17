@@ -12,7 +12,7 @@ const petriDishH = 320;
 
 const environmentW = rootW;
 const environmentH = rootH;
-const environmentImage = "backgroundMORESCIENCE.png";
+const environmentImage = "backgroundSTATUS.png";
 
 const tabW = 300;
 const tabH = 300;
@@ -68,16 +68,16 @@ root.addChild(infoTab);
 infoTab.raiseToTop();
 
 var genes = [
-"it is cold", 
-"it is dark",
-"there is carbon dioxide",
+"there is Carbon Dioxide", 
+"there is solar energy",
+"there is soil",
+"there is ice",
 "there is waste",
-"there is saltwater",
-"fresh water",
-"heat",
-"fuel",
-"light",
-"oxygen"
+"produce Oxygen",
+"produce water",
+"produce food",
+"produce heat",
+"produce fuel"
 ];
 
 function createEnvironment(x, y) {
@@ -212,7 +212,7 @@ function createPetriDish(x, y, rotation, flaskSide) {
 		w.removeChild(w.textW);
 	});
 
-	w.plasmidIndication = createPlasmidIndication(w.width(), w.height());
+	w.plasmidIndication = createPlasmidIndication(2 * w.width() / 3, 2 * w.height() / 3, w.width() / 6, w.height() / 6);
 	w.addChild(w.plasmidIndication);
 	w.plasmidIndication.raiseToTop();
 
@@ -327,42 +327,30 @@ function createInfoButton(petriDish, width, height, x, y) {
 	return w;
 }
 
-function createPlasmidIndication(width, height) {
+function createPlasmidIndication(width, height, x, y) {
 
 	var w = new MultiWidgets.JavaScriptWidget();
 
 	w.setWidth(width);
 	w.setHeight(height);
+	w.setLocation(x, y);
 	w.setAllowRotation(false);
 	w.setFixed();
 	w.setBackgroundColor(0, 0, 0, 0);
 
-	w.ifG = new MultiWidgets.ImageMovieWidget();
+	w.partGlow = new MultiWidgets.ImageMovieWidget();
 
-	if (w.ifG.load("if")) {
-	    w.ifG.addOperator(new MultiWidgets.StayInsideParentOperator());
-	    w.ifG.setLocation((width / 2) - (9 * width / 24), (height / 2) - height / 6);
-	    w.ifG.setHeight(w.height() / 3);
-	    w.ifG.setWidth(w.height() / 3);	
-	    w.ifG.setFixed();
-    	w.ifG.setAutoRaiseToTop(false);
-    	w.ifG.setFPS(2);
-    	w.addChild(w.ifG);
-    	w.ifG.raiseToTop();
-	}
-
-	w.thenG = new MultiWidgets.ImageMovieWidget();
-
-	if (w.thenG.load("then")) {
-	    w.thenG.addOperator(new MultiWidgets.StayInsideParentOperator());
-	    w.thenG.setLocation((width / 2) + (0.2 * width / 24), (height / 2) - height / 6);
-	    w.thenG.setHeight(w.height() / 3);
-	    w.thenG.setWidth(w.height() / 3);
-    	w.thenG.setFixed();
-    	w.thenG.setAutoRaiseToTop(false);
-    	w.thenG.setFPS(2);
-    	w.addChild(w.thenG);
-    	w.thenG.raiseToTop();
+	if (w.partGlow.load("partGlow")) {
+	    w.partGlow.setWidth(w.width());
+		w.partGlow.setHeight(w.height());
+    	w.partGlow.setAutoRaiseToTop(false);
+    	w.partGlow.setFixed();
+    	w.partGlow.raiseInputFlags(MultiWidgets.Widget.InputFlags.INPUT_TRANSLATE);
+    	w.partGlow.setLoopMode(MultiWidgets.ImageMovieWidget.LoopMode.LOOPING);
+    	w.partGlow.setFPS(20);
+    	w.addChild(w.partGlow);
+    	w.partGlow.raiseToTop();
+    	w.partGlow.play();
 	}
 
 	return w;
@@ -446,6 +434,22 @@ function createFlask(petriDish, width, height, x, y, xySwapped) {
     	w.animation.play();
 	}
 
+	w.partGlow = new MultiWidgets.ImageMovieWidget();
+
+	if (w.partGlow.load("MARSglow")) {
+	    w.partGlow.setWidth(w.width() / 2);
+		w.partGlow.setHeight(w.height() / 2);
+    	w.partGlow.setAutoRaiseToTop(false);
+    	w.partGlow.setFixed();
+    	w.partGlow.raiseInputFlags(MultiWidgets.Widget.InputFlags.INPUT_TRANSLATE);
+    	w.partGlow.setLoopMode(MultiWidgets.ImageMovieWidget.LoopMode.LOOPING);
+    	w.partGlow.setFPS(15);
+    	w.addChild(w.partGlow);
+    	w.partGlow.raiseToTop();
+    	w.partGlow.play();
+    	w.partGlow.setLocation(w.width() / 4, 2 * w.height() / 5);
+	}
+
 	w.status = 0;
 	//0 - empty, 1 - duplicating, 2 - ready to go to MARS, 3 - emptying
 
@@ -456,6 +460,7 @@ function createFlask(petriDish, width, height, x, y, xySwapped) {
 		    	w.animation.raiseToTop();
 		    	w.animation.play(false);
 			}
+			w.removeChild(w.partGlow);
 			w.status = 1;
 		}
 
@@ -494,25 +499,8 @@ function createFlask(petriDish, width, height, x, y, xySwapped) {
 				var lengthA = absoluteY;
 				var lengthB = midpointX - absoluteX;
 				var theta = Math.atan(lengthA / lengthB);
-				//var newRotation = initialRotation - (Math.PI / 2) - theta;
-				var newRotation = - (theta + ( (- sign(theta)) * (Math.PI / 2))) - (initialRotation);
+				var newRotation = - theta - (unsign(theta) * Math.PI / 2) - initialRotation;
 				w.animation.setRotationAboutCenter(newRotation);
-
-
-
-				console.log(" ");
-				console.log("--------------------------------------");
-				// console.log("initialRotation: " + initialRotation);
-				console.log("initialRotation (degrees): " + initialRotation * 180 / Math.PI);
-				console.log("lengthA: " + lengthA);
-				console.log("lengthB: " + lengthB);
-				// console.log("theta: " + theta);
-				console.log("theta (degrees): " + theta * 180 / Math.PI);
-				// console.log("newRotation: " + newRotation);
-				console.log("newRotation (degrees): " + newRotation * 180 / Math.PI);
-				console.log("");
-
-
 
 				if (w.animation.load("MARSpour")) {
 					w.animation.raiseToTop();
@@ -534,6 +522,7 @@ function createFlask(petriDish, width, height, x, y, xySwapped) {
 				w.animation.setFixed();
 				w.animation.setRotationAboutCenter(0);
 			}
+			w.addChild(w.partGlow);
 			w.status = 0;
 		}
 
@@ -616,8 +605,8 @@ function areSameFloats(f1, f2) {
 	return (Math.abs(f1 - f2) < 10);
 }
 
-function sign(n) {
-	return (n >= 0) ? 1 : -1;
+function unsign(n) {
+	return (n >= 0) ? -1 : 1;
 }
 
 
