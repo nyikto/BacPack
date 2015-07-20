@@ -5,6 +5,9 @@ BacPack1.js
 
 var root = $.app.mainLayer();
 
+//---------------------------------------------------------------------------
+//--------------------Constants and Filenames--------------------------------
+
 const rootW = root.width();
 const rootH = root.height();
 const petriDishW = 320;
@@ -12,11 +15,11 @@ const petriDishH = 320;
 
 const environmentW = rootW;
 const environmentH = rootH;
-const environmentImage = "backgroundSTATUS.png";
 
 const tabW = 300;
 const tabH = 300;
 
+const environmentImage = "backgroundSTATUSicon.png";
 const petriDishImage = "dish.png";
 const infoTabImage = "marsinst.jpeg";
 const iGEMTabImage = "iGEM.png";
@@ -25,13 +28,25 @@ const distanceToMarsCenter = 642;
 const distanceToEdge = rootW / 80;
 const midpointX = 954;
 
-var environment = createEnvironment(0, 0);
+const genes = [
+"there is Carbon Dioxide", 
+"there is solar energy",
+"there is soil",
+"there is ice",
+"there is waste",
+"produces Oxygen",
+"produces water",
+"produces food",
+"produces heat",
+"produces fuel"
+];
+
+//---------------------------------------------------------------------------
+//--------------------Setting up the Environment-----------------------------
+
+var environment = createEnvironment();
 root.addChild(environment);
 
-// var petri1 = createPetriDish(rootW / 10, rootH / 3, Math.PI / 2);
-// var petri2 = createPetriDish(2 * rootW / 3 - petriDishW / 2, 2 * rootH / 3, 0);
-// var petri3 = createPetriDish(rootW / 3 - petriDishW / 2, 2 * rootH / 3, 0);
-// var petri4 = createPetriDish(4 * rootW / 5, rootH / 3 + petriDishW, 3 * Math.PI / 2);
 var petri1 = createPetriDish(distanceToEdge, rootH / 5, Math.PI / 2, 1);
 var petri2 = createPetriDish((3 * rootW / 4) - (petriDishW / 2), rootH - distanceToEdge - petriDishH, 0, 0);
 var petri3 = createPetriDish((rootW / 4) - (petriDishW / 2), rootH - distanceToEdge - petriDishH, 0, 1);
@@ -47,62 +62,22 @@ petri2.raiseToTop();
 petri3.raiseToTop();
 petri4.raiseToTop();
 
-// var test = new MultiWidgets.JavaScriptWidget();
-
-// test.setFixed();
-// test.setWidth(100);
-// test.setHeight(100);
-// test.setLocation(954 - 50, 642);
-
-// test.setBackgroundColor(1, 1, 1, 0.5);
-
-// root.addChild(test);
-// test.raiseToTop();
-
-// root.addChild(createPetriDish(rootW / 5, rootH / 3, Math.PI / 2));
-// root.addChild(createPetriDish(2 * rootW / 3 - petriDishW / 2, 2 * rootH / 3, 0));
-// root.addChild(createPetriDish(rootW / 3 - petriDishW / 2, 2 * rootH / 3, 0));
-// root.addChild(createPetriDish(4 * rootW / 5, rootH / 3 + petriDishW, 3 * Math.PI / 2));
 var infoTab = createInfoTab(rootW / 2 - tabW / 2, rootH - tabH, 0);
 root.addChild(infoTab);
 infoTab.raiseToTop();
 
-var genes = [
-"there is Carbon Dioxide", 
-"there is solar energy",
-"there is soil",
-"there is ice",
-"there is waste",
-"produce Oxygen",
-"produce water",
-"produce food",
-"produce heat",
-"produce fuel"
-];
+//---------------------------------------------------------------------------
+//--------------------Constructor Functions for All Widgets------------------
 
-function createEnvironment(x, y) {
+function createEnvironment() {
 
-	var w = new MultiWidgets.JavaScriptWidget();
+	var w = new MultiWidgets.ImageWidget();
 
-	w.setLocation(x, y);
-	w.setWidth(environmentW);
-	w.setHeight(environmentH);
-	w.setFixed();
-	w.setAutoRaiseToTop(false);
-
-
-	w.setBackgroundColor(0, 0, 0, 0);
-
-	w.image = new MultiWidgets.ImageWidget();
-
-	if (w.image.load(environmentImage)) {
-	    w.image.addOperator(new MultiWidgets.StayInsideParentOperator());
-	    w.image.setWidth(w.width());
-	    w.image.setHeight(w.height());
-    	w.image.setLocation(0, 0);
-    	w.image.setFixed();
-    	w.image.setAutoRaiseToTop(false);
-    	w.addChild(w.image);
+	if (w.load(environmentImage)) {
+	    w.setWidth(w.width());
+	    w.setHeight(w.height());
+    	w.setFixed();
+    	w.setAutoRaiseToTop(false);
 	}
 
 	return w;
@@ -116,8 +91,8 @@ function createPetriDish(x, y, rotation, flaskSide) {
 	w.setWidth(petriDishW);
 	w.setHeight(petriDishH);
 	w.setRotationAboutCenter(rotation);
+	w.setAutoRaiseToTop(false);
 	w.setFixed();
-
 	w.setBackgroundColor(0, 0, 0, 0);
 
 	w.flaskSide = flaskSide;
@@ -134,9 +109,7 @@ function createPetriDish(x, y, rotation, flaskSide) {
 	w.image = new MultiWidgets.ImageWidget();
 
 	if (w.image.load(petriDishImage)) {
-	    w.image.addOperator(new MultiWidgets.StayInsideParentOperator());
     	w.image.resizeToFit(new Nimble.SizeF(w.width(), w.height()));
-    	w.image.setLocation(0, 0);
     	w.image.setFixed();
     	w.image.setAutoRaiseToTop(false);
     	w.addChild(w.image);
@@ -154,13 +127,15 @@ function createPetriDish(x, y, rotation, flaskSide) {
 	w.markerSensor.setHeight(petriDishH);
 	w.markerSensor.setFixed();
 
-	w.markerSensor.setBackgroundColor(0, 0, 0, 0);
+	w.markerSensor.setBackgroundColor(1, 0, 0, 0.5);
 
 	w.markerSensor.onMarkerDown(function(id_as_string) {
 		var idAsInt = parseInt(id_as_string);
 		var gm = $.app.grabManager();
 		var marker = gm.findMarker(idAsInt);
 		w.markers.push(marker);
+
+		console.log("length of markers array: " + w.markers.length);
 
 		if (isValidPlasmid(w.markers)) {
 			if (codeType(w.markers[0].code()) == 0) {
@@ -171,9 +146,8 @@ function createPetriDish(x, y, rotation, flaskSide) {
 				w.thenGene = w.markers[0].code();
 			}
 			plasmidInserted(w);
-			var text = "If " + genes[w.ifGene - 1] + ", this bacteria makes " + genes[w.thenGene - 1] + "!";
+			var text = "\n\n\nIf " + genes[w.ifGene - 1] + ", this bacteria " + genes[w.thenGene - 1] + "!";
 			w.textW.setText(text);
-			// displayContextMenu();
 		}
 	});
 
@@ -189,12 +163,14 @@ function createPetriDish(x, y, rotation, flaskSide) {
 	w.textW.setWidth(w.width());
 	w.textW.setHeight(w.height());
 	w.textW.setLocation(0, 0);
-	w.textW.setBackgroundColor(1, 0, 1, 0.5);
+	w.textW.setBackgroundColor(0.5, 0.5, 1, 0.7);
 	w.textW.setFontSize(30);
 	w.textW.setText("");
 	w.textW.setStrokeWidth(1);
 	w.textW.setFixed();
 	w.textW.setAllowRotation(false);
+	w.textW.setFontFamily(["Trebuchet MS", "Verdana"]);
+	w.textW.setColor(0.9, 0.9, 1, 1);
 
 	w.xButton = new MultiWidgets.ImageWidget();
 
@@ -216,27 +192,18 @@ function createPetriDish(x, y, rotation, flaskSide) {
 	w.addChild(w.plasmidIndication);
 	w.plasmidIndication.raiseToTop();
 
-	// if (w.flaskSide == 0) {
-	// 	w.clearButton = createClearButton(w, w.width() / 4, w.height() / 4, - w.width() / 4, petriDishW - w.height() / 4);
-	// 	w.infoButton = createInfoButton(w, w.width() / 4, w.height() / 4, - w.width() / 4, petriDishW - w.height() / 4 * 2);
-	// 	w.flask = createFlask(w, w.width() / 2, w.height() / 2, - w.clearButton.width() - w.width() / 2, 0, w.xySwapped);
-	// } else {
-	// 	w.clearButton = createClearButton(w, w.width() / 4, w.height() / 4, petriDishW, petriDishW - w.height() / 4);
-	// 	w.infoButton = createInfoButton(w, w.width() / 4, w.height() / 4, petriDishW, petriDishW - w.height() / 4 * 2);
-	// 	w.flask = createFlask(w, w.width() / 2, w.height() / 2, petriDishW + w.clearButton.width(), 0, w.xySwapped);
-	// }
-
 	w.clearButton = createClearButton(w, w.width() / 4, w.height() / 4, 2 * petriDishW / 3 - petriDishW / 8, - petriDishH / 8);
 	w.infoButton = createInfoButton(w, w.width() / 4, w.height() / 4, w.width() / 3 - petriDishW / 8, - petriDishH / 8);
 
 	if (w.flaskSide == 0) {
 		w.flask = createFlask(w, w.width() / 2, w.height() / 2, - w.width() / 2, 0, w.xySwapped);
+		w.tip = createTip(w.width() / 2, w.height() / 2, w.width(), 0);
 	} else {
 		w.flask = createFlask(w, w.width() / 2, w.height() / 2, petriDishW, 0, w.xySwapped);
+		w.tip = createTip(w.width() / 2, w.height() / 2, - w.width() / 2, 0);
 	}
 
 	w.bacBabe = createBacBabe(w, w.width() / 2, w.height() / 2, w.width() / 4, w.height() / 4);
-
 
 	w.addChild(w.markerSensor);
 	w.markerSensor.raiseToTop();
@@ -254,34 +221,40 @@ function plasmidInserted(w) {
 	w.addChild(w.flask);
 	w.flask.raiseToTop();
 	w.hasPlasmid = true;
+	w.addChild(w.tip);
+	w.tip.raiseToTop();
+	w.tip.setText("Drag the bacteria into the flask!");
 }
 
 function plasmidCleared(w) {
 	w.addChild(w.plasmidIndication);
-	w.addChild(w.markerSensor);
 	w.removeChild(w.clearButton);
 	w.removeChild(w.infoButton);
 	w.removeChild(w.bacBabe);
 	w.removeChild(w.flask);
 	if (w.hasChild(w.textW)) w.removeChild(w.textW);
+	if (w.hasChild(w.tip)) w.removeChild(w.tip);
 	w.hasPlasmid = false;
 	w.ifGene = null;
 	w.thenGene = null;
+
+	w.addChild(w.markerSensor);
+	w.markerSensor.raiseToTop();
 }
 
 function createClearButton(petriDish, width, height, x, y) {
 
 	var w = new MultiWidgets.JavaScriptWidget();
 
-	w.setWidth(width);
-	w.setHeight(height);
+	w.setWidth(9 * width / 10);
+	w.setHeight(9 * height / 10);
 	w.setFixed();
 	w.setLocation(x, y);
 	w.setBackgroundColor(0, 0, 0, 0);
 
 	w.image = new MultiWidgets.ImageWidget();
 
-	if (w.image.load("i.png")) {
+	if (w.image.load("clear.png")) {
 	    w.image.addOperator(new MultiWidgets.StayInsideParentOperator());
     	w.image.resizeToFit(new Nimble.SizeF(w.width(), w.height()));
     	w.image.setFixed();
@@ -318,7 +291,6 @@ function createInfoButton(petriDish, width, height, x, y) {
     	w.image.raiseToTop();
 	}
 
-
 	w.image.onSingleTap(function() {
 		petriDish.addChild(petriDish.textW);
 		petriDish.textW.raiseToTop();
@@ -334,8 +306,8 @@ function createPlasmidIndication(width, height, x, y) {
 	w.setWidth(width);
 	w.setHeight(height);
 	w.setLocation(x, y);
-	w.setAllowRotation(false);
 	w.setFixed();
+	w.setAutoRaiseToTop(false);
 	w.setBackgroundColor(0, 0, 0, 0);
 
 	w.partGlow = new MultiWidgets.ImageMovieWidget();
@@ -345,12 +317,10 @@ function createPlasmidIndication(width, height, x, y) {
 		w.partGlow.setHeight(w.height());
     	w.partGlow.setAutoRaiseToTop(false);
     	w.partGlow.setFixed();
-    	w.partGlow.raiseInputFlags(MultiWidgets.Widget.InputFlags.INPUT_TRANSLATE);
     	w.partGlow.setLoopMode(MultiWidgets.ImageMovieWidget.LoopMode.LOOPING);
     	w.partGlow.setFPS(20);
     	w.addChild(w.partGlow);
     	w.partGlow.raiseToTop();
-    	w.partGlow.play();
 	}
 
 	return w;
@@ -382,27 +352,8 @@ function createBacBabe(petriDish, width, height, x, y) {
     	w.animation.play();
 	}
 
-	// w.image = new MultiWidgets.ImageWidget();
-
-	// if (w.image.load("bigbac.png")) {
-	//     w.image.addOperator(new MultiWidgets.StayInsideParentOperator());
- //    	w.image.resizeToFit(new Nimble.SizeF(w.width(), w.height()));
- //    	w.addChild(w.image);
- //    	w.image.raiseToTop();
- //    	w.image.setFixed();
- //    	w.image.raiseInputFlags(MultiWidgets.Widget.InputFlags.INPUT_TRANSLATE);
-	// }
-
-
-
-	w.onUpdate(function(frameInfo) {
-		// if (w.image.intersects(petriDish.flask)) {
-		// 	petriDish.flask.image.load("flask_green.png");
-		// 	petriDish.flask.image.raiseInputFlags(MultiWidgets.Widget.InputFlags.INPUT_TRANSLATE);
-		// }
-	});
-
 	return w;
+
 }
 
 function createFlask(petriDish, width, height, x, y, xySwapped) {
@@ -439,19 +390,22 @@ function createFlask(petriDish, width, height, x, y, xySwapped) {
 	if (w.partGlow.load("MARSglow")) {
 	    w.partGlow.setWidth(w.width() / 2);
 		w.partGlow.setHeight(w.height() / 2);
+		w.partGlow.setLocation(w.width() / 4, 2 * w.height() / 5);
     	w.partGlow.setAutoRaiseToTop(false);
     	w.partGlow.setFixed();
-    	w.partGlow.raiseInputFlags(MultiWidgets.Widget.InputFlags.INPUT_TRANSLATE);
     	w.partGlow.setLoopMode(MultiWidgets.ImageMovieWidget.LoopMode.LOOPING);
     	w.partGlow.setFPS(15);
     	w.addChild(w.partGlow);
     	w.partGlow.raiseToTop();
     	w.partGlow.play();
-    	w.partGlow.setLocation(w.width() / 4, 2 * w.height() / 5);
 	}
 
 	w.status = 0;
 	//0 - empty, 1 - duplicating, 2 - ready to go to MARS, 3 - emptying
+
+	w.absoluteX = 0;
+	w.absoluteY = 0;
+	w.newRotation = 0;
 
 	w.onUpdate(function(frameInfo) {
 
@@ -461,6 +415,8 @@ function createFlask(petriDish, width, height, x, y, xySwapped) {
 		    	w.animation.play(false);
 			}
 			w.removeChild(w.partGlow);
+			petriDish.removeChild(petriDish.tip);
+			petriDish.bacBabe.animation.setFixed();
 			w.status = 1;
 		}
 
@@ -470,37 +426,40 @@ function createFlask(petriDish, width, height, x, y, xySwapped) {
 				w.animation.setLoopMode(MultiWidgets.ImageMovieWidget.LoopMode.LOOPING);
 				w.animation.raiseInputFlags(MultiWidgets.Widget.InputFlags.INPUT_TRANSLATE);
 			}
+			petriDish.addChild(petriDish.tip);
+			petriDish.tip.raiseToTop();
+			petriDish.tip.setText("Drag the flask to Mars!");
 			w.status = 2;
 		}
 
 		if (w.status == 2) {
-			var dist, absoluteX, absoluteY, initialRotation;
+			var dist, initialRotation;
 
 			if (w.xySwapped == 1) {
-				absoluteX = petriDish.x() - w.y() - w.animation.y() - w.animation.height();
-				absoluteY = petriDish.y() + w.x() + w.animation.x() + w.animation.width() / 2;
+				w.absoluteX = petriDish.x() - w.y() - w.animation.y() - w.animation.height();
+				w.absoluteY = petriDish.y() + w.x() + w.animation.x() + w.animation.width() / 2;
 				initialRotation = Math.PI / 2;
-				dist = getDistanceBetween(absoluteX, absoluteY, midpointX, 0);
+				dist = getDistanceBetween(w.absoluteX, w.absoluteY, midpointX, 0);
 			}
 			else if (w.xySwapped == -1) {
-				absoluteX =petriDish.x() + w.y() + w.animation.y() + w.animation.height();
-				absoluteY = petriDish.y() - w.x() - w.animation.x() - w.animation.width() / 2;
+				w.absoluteX =petriDish.x() + w.y() + w.animation.y() + w.animation.height();
+				w.absoluteY = petriDish.y() - w.x() - w.animation.x() - w.animation.width() / 2;
 				initialRotation = 3 * Math.PI / 2;
-				dist = getDistanceBetween(absoluteX, absoluteY, midpointX, 0);
+				dist = getDistanceBetween(w.absoluteX, w.absoluteY, midpointX, 0);
 
 			} else {
-				absoluteX = petriDish.x() + w.x() + w.animation.x() + w.animation.width() / 2;
-				absoluteY = petriDish.y() + w.y() + w.animation.y() + w.animation.height();
+				w.absoluteX = petriDish.x() + w.x() + w.animation.x() + w.animation.width() / 2;
+				w.absoluteY = petriDish.y() + w.y() + w.animation.y() + w.animation.height();
 				initialRotation = 0;
-				dist = getDistanceBetween(absoluteX, absoluteY, midpointX, 0);
+				dist = getDistanceBetween(w.absoluteX, w.absoluteY, midpointX, 0);
 			}
 
 			if (dist < distanceToMarsCenter) {
-				var lengthA = absoluteY;
-				var lengthB = midpointX - absoluteX;
+				var lengthA = w.absoluteY;
+				var lengthB = midpointX - w.absoluteX;
 				var theta = Math.atan(lengthA / lengthB);
-				var newRotation = - theta - (unsign(theta) * Math.PI / 2) - initialRotation;
-				w.animation.setRotationAboutCenter(newRotation);
+				w.newRotation = - theta - (unsign(theta) * Math.PI / 2) - initialRotation;
+				w.animation.setRotationAboutCenter(w.newRotation);
 
 				if (w.animation.load("MARSpour")) {
 					w.animation.raiseToTop();
@@ -512,17 +471,39 @@ function createFlask(petriDish, width, height, x, y, xySwapped) {
 					w.animation.setScale(1.1);
 				}
 				w.status = 3;
+
+				petriDish.removeChild(petriDish.tip);
 			}
 		}
 
 		if (w.status == 3 && !w.animation.isPlaying()) {
+			
+			if (w.xySwapped == 1) {
+				w.absoluteX = petriDish.x() - w.y() - w.animation.y();
+				w.absoluteY = petriDish.y() + w.x() + w.animation.x();
+			}
+			else if (w.xySwapped == -1) {
+				w.absoluteX =petriDish.x() + w.y() + w.animation.y();
+				w.absoluteY = petriDish.y() - w.x() - w.animation.x();
+
+			} else {
+				w.absoluteX = petriDish.x() + w.x() + w.animation.x();
+				w.absoluteY = petriDish.y() + w.y() + w.animation.y();
+			}
+
+			var marsBac = createMarsBacteria(w.width() / 2, w.height() / 2, w.absoluteX, w.absoluteY, w.newRotation);
+			root.addChild(marsBac);
+			marsBac.raiseToTop();
+
 			if (w.animation.load("MARSempty")) {
 				w.setLocation(w.xOrig, w.yOrig);
 				w.animation.setLocation(0, 0);
 				w.animation.setFixed();
 				w.animation.setRotationAboutCenter(0);
 			}
+
 			w.addChild(w.partGlow);
+			petriDish.bacBabe.animation.raiseInputFlags(MultiWidgets.Widget.InputFlags.INPUT_TRANSLATE);
 			w.status = 0;
 		}
 
@@ -542,22 +523,39 @@ function createInfoTab(x, y, rotation) {
 	w.setRotation(rotation);
 	w.setFixed();
 
-	w.setBackgroundColor(1, 1, 0, 0);
+	w.setBackgroundColor(0, 0, 0, 0);
 
-	w.closedHeight = 9 * w.width() / 10;
+	w.closedHeight = 9 * w.height() / 10;
 
-	w.image = new MultiWidgets.ImageWidget();
+	//w.image = new MultiWidgets.ImageWidget();
 
-	if (w.image.load(infoTabImage)) {
-	    // w.image.addOperator(new MultiWidgets.StayInsideParentOperator());
-    	w.image.resizeToFit(new Nimble.SizeF(w.width(), w.height()));
-    	w.image.setLocation(0, 9 * w.width() / 10);
-    	w.image.setAutoRaiseToTop(false);
-    	w.addChild(w.image);
-    	w.image.raiseToTop();
-    	w.image.setFixed();
-    	w.image.raiseInputFlags(MultiWidgets.Widget.InputFlags.INPUT_TRANSLATE_Y);
-	}
+	w.image = new MultiWidgets.TextWidget();
+
+	w.image.setWidth(w.width());
+	w.image.setHeight(4 * w.height() / 5);
+	w.image.setLocation(0, w.closedHeight);
+	w.image.setBackgroundColor(0.8, 0.8, 1, 0.7);
+	w.image.setFontSize(15);
+	w.image.setText("   Instructions\n\nYou are a scientist helping explorers on scientific missions. Design and build useful bacteria and deploy them to Mars!\n\nPlay with the different genes to engineer bacteria that can produce useful supplies for the astronauts.\n\nDeploy the bacteria to Mars and check the status bar to see how your bacteria are helping the astronauts!");
+	w.image.setStrokeWidth(1);
+	w.image.setFixed();
+	w.image.raiseInputFlags(MultiWidgets.Widget.InputFlags.INPUT_TRANSLATE_Y);
+	w.image.setAllowRotation(false);
+	w.image.setColor(0.2, 0.2, 0.2, 1);
+	w.addChild(w.image);
+	w.image.raiseToTop();
+	w.image.setFontFamily(["Trebuchet MS", "Verdana"]);
+
+	// if (w.image.load(infoTabImage)) {
+	//     // w.image.addOperator(new MultiWidgets.StayInsideParentOperator());
+ //    	w.image.resizeToFit(new Nimble.SizeF(w.width(), w.height()));
+ //    	w.image.setLocation(0, 9 * w.width() / 10);
+ //    	w.image.setAutoRaiseToTop(false);
+ //    	w.addChild(w.image);
+ //    	w.image.raiseToTop();
+ //    	w.image.setFixed();
+ //    	w.image.raiseInputFlags(MultiWidgets.Widget.InputFlags.INPUT_TRANSLATE_Y);
+	// }
 
 	w.onUpdate(function(frameInfo) {
 		if (w.image.y() < 0) {
@@ -571,6 +569,56 @@ function createInfoTab(x, y, rotation) {
 
 }
 
+function createMarsBacteria(width, height, x, y, rotation) {
+	var w = new MultiWidgets.JavaScriptWidget();
+
+	w.setWidth(width);
+	w.setHeight(height);
+	w.setLocation(x, y);
+	w.setRotationAboutCenter(rotation);
+	w.setFixed();
+	w.setAutoRaiseToTop(false);
+	w.setBackgroundColor(0, 0, 0, 0);
+
+	w.partGlow = new MultiWidgets.ImageMovieWidget();
+
+	if (w.partGlow.load("marsSurfaceIdle")) {
+	    w.partGlow.setWidth(w.width());
+		w.partGlow.setHeight(w.height());
+    	w.partGlow.setAutoRaiseToTop(false);
+    	w.partGlow.setFixed();
+    	w.partGlow.setLoopMode(MultiWidgets.ImageMovieWidget.LoopMode.LOOPING);
+    	w.partGlow.setFPS(20);
+    	w.addChild(w.partGlow);
+    	w.partGlow.raiseToTop();
+	}
+
+	return w;
+}
+
+function createTip(width, height, x, y) {
+
+	var w = new MultiWidgets.TextWidget();
+
+	w.setWidth(width);
+	w.setHeight(height);
+	w.setLocation(x, y);
+	w.setBackgroundColor(0.5, 0.5, 1, 0.7);
+	w.setFontSize(30);
+	w.setText("");
+	w.setStrokeWidth(1);
+	w.setFixed();
+	w.setAllowRotation(false);
+	w.setFontFamily(["Trebuchet MS", "Verdana"]);
+	w.setColor(0.9, 0.9, 1, 1);
+
+	return w;
+}
+
+
+//---------------------------------------------------------------------------
+//--------------------Helper Functions---------------------------------------
+
 function isValidPlasmid(marks) {
 	if (marks.length != 2) return false;
 
@@ -580,7 +628,6 @@ function isValidPlasmid(marks) {
 	return ((codeType(first) == 0 && codeType(second) == 1) || (codeType(first) == 1 && codeType(second) == 0));
 }
 
-
 function codeType(code) {
 	if (code > 0 && code < 6) return 0;
 	else if (code > 5 && code < 11) return 1;
@@ -588,16 +635,12 @@ function codeType(code) {
 }
 
 function getDistanceBetween(x1, y1, x2, y2) {
-
 	var xs = 0;
 	var ys = 0;
-
 	xs = x2 - x1;
 	xs = xs * xs;
-
 	ys = y2 - y1;
 	ys = ys * ys;
-
 	return Math.sqrt(xs + ys);
 }
 
