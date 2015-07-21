@@ -19,7 +19,10 @@ const environmentH = rootH;
 const tabW = 300;
 const tabH = 300;
 
-const environmentImage = "backgroundSTATUSicon.png";
+const statusBarW = 100;
+const statusBarH = 16;
+
+const environmentImage = "backgroundnewSTATUS.png";
 const petriDishImage = "dish.png";
 const infoTabImage = "marsinst.jpeg";
 const iGEMTabImage = "iGEM.png";
@@ -41,8 +44,35 @@ const genes = [
 "produces fuel"
 ];
 
+const statusNeeds = [
+"Oxygen",
+"water",
+"food",
+"heat",
+"fuel"
+]
+
 //---------------------------------------------------------------------------
 //--------------------Setting up the Environment-----------------------------
+
+
+var statusLevels = [
+Math.floor((Math.random() * 50) + 40),
+Math.floor((Math.random() * 50) + 40),
+Math.floor((Math.random() * 50) + 40),
+Math.floor((Math.random() * 50) + 40),
+Math.floor((Math.random() * 50) + 40)
+]
+
+var statusBars = [];
+
+for (var i = 0; i < statusLevels.length; i++) {
+	statusBars[i] = createStatusBarRectangle(i, 538 + (i * (statusBarW + 90)), 36);
+	root.addChild(statusBars[i]);
+	statusBars[i].raiseToTop();
+}
+
+//0 - oxygen, 1 - water, 2 - food, 3 - heat, 4 - fuel
 
 var environment = createEnvironment();
 root.addChild(environment);
@@ -71,14 +101,60 @@ infoTab.raiseToTop();
 
 function createEnvironment() {
 
-	var w = new MultiWidgets.ImageWidget();
+	var w = new MultiWidgets.JavaScriptWidget();
 
-	if (w.load(environmentImage)) {
-	    w.setWidth(w.width());
-	    w.setHeight(w.height());
-    	w.setFixed();
-    	w.setAutoRaiseToTop(false);
+	w.setWidth(rootW);
+	w.setHeight(rootH);
+	w.setFixed();
+	w.setAutoRaiseToTop(false);
+
+	w.image = new MultiWidgets.ImageWidget();
+
+	if (w.image.load(environmentImage)) {
+	    w.image.setWidth(w.width());
+	    w.image.setHeight(w.height());
+    	w.image.setFixed();
+    	w.image.setAutoRaiseToTop(false);
+    	w.addChild(w.image);
+    	w.image.raiseToTop();
 	}
+
+	w.onUpdate(function(frameInfo) {
+		for (var i = 0; i < statusLevels.length; i++) {
+			if (Math.floor((Math.random() * 500) + 1) == 1) {
+				changeStatusBar(i, -1);
+			}
+		}
+	});
+
+	return w;
+}
+
+function changeStatusBar(n, delta) {
+	statusLevels[n] += delta;
+	if (statusLevels[n] < 0) statusLevels[n] = 0;
+	if (statusLevels[n] > 100) statusLevels[n] = 100;
+	console.log("Level of " + statusNeeds[n] + " changed from " + (statusLevels[n] - delta) + " to " + statusLevels[n]);
+}
+
+
+
+function createStatusBarRectangle(n, x, y) {
+
+	var w = new MultiWidgets.JavaScriptWidget();
+
+	w.setLocation(x, y);
+	w.setWidth(statusBarW * statusLevels[n] / 100);
+	w.setHeight(statusBarH);
+	w.setFixed();
+	w.setBackgroundColor(1, 1, 1, 1);
+
+	w.xOrig = x;
+
+	w.onUpdate(function(frameInfo) {
+		w.setWidth(statusBarW * (100 - statusLevels[n]) / 100);
+		w.setX(w.xOrig + (statusBarW * (statusLevels[n]) / 100));
+	});
 
 	return w;
 }
@@ -127,7 +203,7 @@ function createPetriDish(x, y, rotation, flaskSide) {
 	w.markerSensor.setHeight(petriDishH);
 	w.markerSensor.setFixed();
 
-	w.markerSensor.setBackgroundColor(1, 0, 0, 0.5);
+	w.markerSensor.setBackgroundColor(1, 0, 0, 0);
 
 	w.markerSensor.onMarkerDown(function(id_as_string) {
 		var idAsInt = parseInt(id_as_string);
@@ -135,7 +211,7 @@ function createPetriDish(x, y, rotation, flaskSide) {
 		var marker = gm.findMarker(idAsInt);
 		w.markers.push(marker);
 
-		console.log("length of markers array: " + w.markers.length);
+		// console.log("length of markers array: " + w.markers.length);
 
 		if (isValidPlasmid(w.markers)) {
 			if (codeType(w.markers[0].code()) == 0) {
@@ -237,7 +313,6 @@ function plasmidCleared(w) {
 	w.hasPlasmid = false;
 	w.ifGene = null;
 	w.thenGene = null;
-
 	w.addChild(w.markerSensor);
 	w.markerSensor.raiseToTop();
 }
@@ -255,7 +330,6 @@ function createClearButton(petriDish, width, height, x, y) {
 	w.image = new MultiWidgets.ImageWidget();
 
 	if (w.image.load("clear.png")) {
-	    w.image.addOperator(new MultiWidgets.StayInsideParentOperator());
     	w.image.resizeToFit(new Nimble.SizeF(w.width(), w.height()));
     	w.image.setFixed();
     	w.image.setAutoRaiseToTop(false);
@@ -283,7 +357,6 @@ function createInfoButton(petriDish, width, height, x, y) {
 	w.image = new MultiWidgets.ImageWidget();
 
 	if (w.image.load("i.png")) {
-	    w.image.addOperator(new MultiWidgets.StayInsideParentOperator());
     	w.image.resizeToFit(new Nimble.SizeF(w.width(), w.height()));
     	w.image.setFixed();
     	w.image.setAutoRaiseToTop(false);
@@ -495,6 +568,8 @@ function createFlask(petriDish, width, height, x, y, xySwapped) {
 			root.addChild(marsBac);
 			marsBac.raiseToTop();
 
+			changeStatusBar(petriDish.thenGene - 6, 10);
+
 			if (w.animation.load("MARSempty")) {
 				w.setLocation(w.xOrig, w.yOrig);
 				w.animation.setLocation(0, 0);
@@ -608,7 +683,6 @@ function createTip(width, height, x, y) {
 	w.setText("");
 	w.setStrokeWidth(1);
 	w.setFixed();
-	w.setAllowRotation(false);
 	w.setFontFamily(["Trebuchet MS", "Verdana"]);
 	w.setColor(0.9, 0.9, 1, 1);
 
