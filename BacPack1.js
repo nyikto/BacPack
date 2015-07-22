@@ -17,10 +17,10 @@ const environmentW = rootW;
 const environmentH = rootH;
 
 const tabW = 300;
-const tabH = 300;
+const tabH = 340;
 
-const buttonW = 60;
-const buttonH = 60;
+const buttonW = 45;
+const buttonH = 45;
 
 const statusBarW = 100;
 const statusBarH = 16;
@@ -124,7 +124,7 @@ function createEnvironment() {
 
 	w.onUpdate(function(frameInfo) {
 		for (var i = 0; i < statusLevels.length; i++) {
-			if (Math.floor((Math.random() * 500) + 1) == 1) {
+			if (Math.floor((Math.random() * 2500) + 1) == 1) {
 				changeStatusBar(i, -1);
 			}
 		}
@@ -137,7 +137,6 @@ function changeStatusBar(n, delta) {
 	statusLevels[n] += delta;
 	if (statusLevels[n] < 0) statusLevels[n] = 0;
 	if (statusLevels[n] > 100) statusLevels[n] = 100;
-	//console.log("Level of " + statusNeeds[n] + " changed from " + (statusLevels[n] - delta) + " to " + statusLevels[n]);
 }
 
 
@@ -214,8 +213,6 @@ function createPetriDish(x, y, rotation, flaskSide) {
 		var marker = gm.findMarker(idAsInt);
 		w.markers.push(marker);
 
-		// console.log("length of markers array: " + w.markers.length);
-
 		if (isValidPlasmid(w.markers)) {
 			if (codeType(w.markers[0].code()) == 0) {
 				w.ifGene = w.markers[0].code();
@@ -242,14 +239,17 @@ function createPetriDish(x, y, rotation, flaskSide) {
 	w.textW.setWidth(w.width());
 	w.textW.setHeight(w.height());
 	w.textW.setLocation(0, 0);
-	w.textW.setBackgroundColor(0.5, 0.5, 1, 0.7);
+	w.textW.setBackgroundColor(1, 1, 1, 0.8);
 	w.textW.setFontSize(30);
 	w.textW.setText("");
 	w.textW.setStrokeWidth(1);
 	w.textW.setFixed();
 	w.textW.setAllowRotation(false);
-	w.textW.setFontFamily(["Trebuchet MS", "Verdana"]);
-	w.textW.setColor(0.9, 0.9, 1, 1);
+	w.textW.setFontWeight(Stylish.FontWeight.FONT_WEIGHT_BOLD);
+	w.textW.setFontFamily(["Roboto", "Verdana"]);
+	w.textW.setColor(Radiant.Color.fromRGBA(53, 193, 214, 255));
+
+
 
 	w.xButton = new MultiWidgets.ImageWidget();
 
@@ -271,15 +271,16 @@ function createPetriDish(x, y, rotation, flaskSide) {
 	w.addChild(w.plasmidIndication);
 	w.plasmidIndication.raiseToTop();
 
-	w.infoButton = createInfoButton(w, petriDishW / 3 - buttonW / 2, - buttonH / 2);
-	w.clearButton = createClearButton(w, 2 * petriDishW / 3 - buttonW / 2, - buttonH / 2);
-
 	if (w.flaskSide == 0) {
 		w.flask = createFlask(w, w.width() / 2, w.height() / 2, - w.width() / 2, 0, w.xySwapped);
-		w.tip = createTip(w.width() / 2, w.height() / 2, w.width(), 0);
+		w.tip = createTip(w.width() / 2, w.height() / 2, w.width() + w.width() / 40, w.height() / 4);
+		w.infoButton = createInfoButton(w, petriDishW / 3 - buttonW / 2, - buttonH / 2);
+		w.clearButton = createClearButton(w, 2 * petriDishW / 3 - buttonW / 2, - buttonH / 2);
 	} else {
 		w.flask = createFlask(w, w.width() / 2, w.height() / 2, petriDishW, 0, w.xySwapped);
-		w.tip = createTip(w.width() / 2, w.height() / 2, - w.width() / 2, 0);
+		w.tip = createTip(w.width() / 2, w.height() / 2, - w.width() / 2  - w.width() / 40, w.height() / 4);
+		w.infoButton = createInfoButton(w, 2 * petriDishW / 3 - buttonW / 2, - buttonH / 2);
+		w.clearButton = createClearButton(w, petriDishW / 3 - buttonW / 2, - buttonH / 2);
 	}
 
 	w.bacBabe = createBacBabe(w, w.width() / 2, w.height() / 2, w.width() / 4, w.height() / 4);
@@ -629,17 +630,18 @@ function createInfoTab(x, y, rotation) {
 	w.image.setWidth(w.width());
 	w.image.setHeight(4 * w.height() / 5);
 	w.image.setLocation(0, w.closedHeight);
-	w.image.setBackgroundColor(0.8, 0.8, 1, 0.7);
+	w.image.setBackgroundColor(1, 1, 1, 0.9);
 	w.image.setFontSize(15);
 	w.image.setText("   Instructions\n\nYou are a scientist helping explorers on scientific missions. Design and build useful bacteria and deploy them to Mars!\n\nPlay with the different genes to engineer bacteria that can produce useful supplies for the astronauts.\n\nDeploy the bacteria to Mars and check the status bar to see how your bacteria are helping the astronauts!");
 	w.image.setStrokeWidth(1);
 	w.image.setFixed();
 	w.image.raiseInputFlags(MultiWidgets.Widget.InputFlags.INPUT_TRANSLATE_Y);
 	w.image.setAllowRotation(false);
-	w.image.setColor(0.2, 0.2, 0.2, 1);
+	w.image.setColor(Radiant.Color.fromRGBA(53, 193, 214, 255));
 	w.addChild(w.image);
 	w.image.raiseToTop();
-	w.image.setFontFamily(["Trebuchet MS", "Verdana"]);
+	w.image.setFontFamily(["Roboto", "Verdana"]);
+	w.image.setFontWeight(Stylish.FontWeight.FONT_WEIGHT_BOLD);
 
 	// if (w.image.load(infoTabImage)) {
 	//     // w.image.addOperator(new MultiWidgets.StayInsideParentOperator());
@@ -698,6 +700,7 @@ function createTip(width, height, x, y) {
 	w.setWidth(width);
 	w.setHeight(height);
 	w.setLocation(x, y);
+	w.setFixed();
 	w.setBackgroundColor(0, 0, 0, 0);
 
 	w.image = new MultiWidgets.ImageWidget();
