@@ -19,6 +19,9 @@ const environmentH = rootH;
 const tabW = 300;
 const tabH = 300;
 
+const buttonW = 60;
+const buttonH = 60;
+
 const statusBarW = 100;
 const statusBarH = 16;
 
@@ -134,7 +137,7 @@ function changeStatusBar(n, delta) {
 	statusLevels[n] += delta;
 	if (statusLevels[n] < 0) statusLevels[n] = 0;
 	if (statusLevels[n] > 100) statusLevels[n] = 100;
-	console.log("Level of " + statusNeeds[n] + " changed from " + (statusLevels[n] - delta) + " to " + statusLevels[n]);
+	//console.log("Level of " + statusNeeds[n] + " changed from " + (statusLevels[n] - delta) + " to " + statusLevels[n]);
 }
 
 
@@ -268,8 +271,8 @@ function createPetriDish(x, y, rotation, flaskSide) {
 	w.addChild(w.plasmidIndication);
 	w.plasmidIndication.raiseToTop();
 
-	w.clearButton = createClearButton(w, w.width() / 4, w.height() / 4, 2 * petriDishW / 3 - petriDishW / 8, - petriDishH / 8);
-	w.infoButton = createInfoButton(w, w.width() / 4, w.height() / 4, w.width() / 3 - petriDishW / 8, - petriDishH / 8);
+	w.infoButton = createInfoButton(w, petriDishW / 3 - buttonW / 2, - buttonH / 2);
+	w.clearButton = createClearButton(w, 2 * petriDishW / 3 - buttonW / 2, - buttonH / 2);
 
 	if (w.flaskSide == 0) {
 		w.flask = createFlask(w, w.width() / 2, w.height() / 2, - w.width() / 2, 0, w.xySwapped);
@@ -284,22 +287,35 @@ function createPetriDish(x, y, rotation, flaskSide) {
 	w.addChild(w.markerSensor);
 	w.markerSensor.raiseToTop();
 
+	w.addChild(w.tip);
+	w.tip.raiseToTop();
+
 	return w;
 }
 
 function plasmidInserted(w) {
+
 	w.removeChild(w.plasmidIndication);
 	w.removeChild(w.markerSensor);
+
 	w.addChild(w.clearButton);
+	w.clearButton.raiseToTop();
+
 	w.addChild(w.infoButton);
+	w.infoButton.raiseToTop();
+
 	w.addChild(w.bacBabe);
 	w.bacBabe.raiseToTop();
+
 	w.addChild(w.flask);
 	w.flask.raiseToTop();
+
 	w.hasPlasmid = true;
+
+	w.tip.image.load("bubble2.png");
 	w.addChild(w.tip);
 	w.tip.raiseToTop();
-	w.tip.setText("Drag the bacteria into the flask!");
+
 }
 
 function plasmidCleared(w) {
@@ -308,8 +324,9 @@ function plasmidCleared(w) {
 	w.removeChild(w.infoButton);
 	w.removeChild(w.bacBabe);
 	w.removeChild(w.flask);
+	w.tip.image.load("bubble0.png");
 	if (w.hasChild(w.textW)) w.removeChild(w.textW);
-	if (w.hasChild(w.tip)) w.removeChild(w.tip);
+	// if (w.hasChild(w.tip)) w.removeChild(w.tip);
 	w.hasPlasmid = false;
 	w.ifGene = null;
 	w.thenGene = null;
@@ -317,12 +334,12 @@ function plasmidCleared(w) {
 	w.markerSensor.raiseToTop();
 }
 
-function createClearButton(petriDish, width, height, x, y) {
+function createClearButton(petriDish, x, y) {
 
 	var w = new MultiWidgets.JavaScriptWidget();
 
-	w.setWidth(9 * width / 10);
-	w.setHeight(9 * height / 10);
+	w.setWidth(buttonW);
+	w.setHeight(buttonH);
 	w.setFixed();
 	w.setLocation(x, y);
 	w.setBackgroundColor(0, 0, 0, 0);
@@ -344,12 +361,12 @@ function createClearButton(petriDish, width, height, x, y) {
 	return w;
 }
 
-function createInfoButton(petriDish, width, height, x, y) {
+function createInfoButton(petriDish, x, y) {
 
 	var w = new MultiWidgets.JavaScriptWidget();
 
-	w.setWidth(width);
-	w.setHeight(height);
+	w.setWidth(buttonW);
+	w.setHeight(buttonH);
 	w.setFixed();
 	w.setLocation(x, y);
 	w.setBackgroundColor(0, 0, 0, 0);
@@ -499,9 +516,9 @@ function createFlask(petriDish, width, height, x, y, xySwapped) {
 				w.animation.setLoopMode(MultiWidgets.ImageMovieWidget.LoopMode.LOOPING);
 				w.animation.raiseInputFlags(MultiWidgets.Widget.InputFlags.INPUT_TRANSLATE);
 			}
+			petriDish.tip.image.load("bubble3.png");
 			petriDish.addChild(petriDish.tip);
 			petriDish.tip.raiseToTop();
-			petriDish.tip.setText("Drag the flask to Mars!");
 			w.status = 2;
 		}
 
@@ -576,6 +593,9 @@ function createFlask(petriDish, width, height, x, y, xySwapped) {
 				w.animation.setFixed();
 				w.animation.setRotationAboutCenter(0);
 			}
+			petriDish.tip.image.load("bubble4.png");
+			petriDish.addChild(petriDish.tip);
+			petriDish.tip.raiseToTop();
 
 			w.addChild(w.partGlow);
 			petriDish.bacBabe.animation.raiseInputFlags(MultiWidgets.Widget.InputFlags.INPUT_TRANSLATE);
@@ -673,18 +693,22 @@ function createMarsBacteria(width, height, x, y, rotation) {
 
 function createTip(width, height, x, y) {
 
-	var w = new MultiWidgets.TextWidget();
+	var w = new MultiWidgets.JavaScriptWidget();
 
 	w.setWidth(width);
 	w.setHeight(height);
 	w.setLocation(x, y);
-	w.setBackgroundColor(0.5, 0.5, 1, 0.7);
-	w.setFontSize(30);
-	w.setText("");
-	w.setStrokeWidth(1);
-	w.setFixed();
-	w.setFontFamily(["Trebuchet MS", "Verdana"]);
-	w.setColor(0.9, 0.9, 1, 1);
+	w.setBackgroundColor(0, 0, 0, 0);
+
+	w.image = new MultiWidgets.ImageWidget();
+
+	if (w.image.load("bubble0.png")) {
+    	w.image.resizeToFit(new Nimble.SizeF(w.width(), w.height()));
+    	w.image.setFixed();
+    	w.image.setAutoRaiseToTop(false);
+    	w.addChild(w.image);
+    	w.image.raiseToTop();
+	}
 
 	return w;
 }
