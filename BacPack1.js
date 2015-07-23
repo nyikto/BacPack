@@ -199,40 +199,40 @@ function createPetriDish(x, y, rotation, flaskSide) {
 	w.ifGene = null;
 	w.thenGene = null;
 
-	w.markerSensor = new MultiWidgets.JavaScriptWidget();
-	w.markerSensor.setLocation(0, 0);
-	w.markerSensor.setWidth(petriDishW);
-	w.markerSensor.setHeight(petriDishH);
-	w.markerSensor.setFixed();
+	// w.markerSensor = new MultiWidgets.JavaScriptWidget();
+	// w.markerSensor.setLocation(0, 0);
+	// w.markerSensor.setWidth(petriDishW);
+	// w.markerSensor.setHeight(petriDishH);
+	// w.markerSensor.setFixed();
 
-	w.markerSensor.setBackgroundColor(1, 0, 0, 0);
+	// w.markerSensor.setBackgroundColor(1, 0, 0, 0.5);
 
-	w.markerSensor.onMarkerDown(function(id_as_string) {
-		var idAsInt = parseInt(id_as_string);
-		var gm = $.app.grabManager();
-		var marker = gm.findMarker(idAsInt);
-		w.markers.push(marker);
+	// w.markerSensor.onMarkerDown(function(id_as_string) {
+	// 	var idAsInt = parseInt(id_as_string);
+	// 	var gm = $.app.grabManager();
+	// 	var marker = gm.findMarker(idAsInt);
+	// 	w.markers.push(marker);
 
-		if (isValidPlasmid(w.markers)) {
-			if (codeType(w.markers[0].code()) == 0) {
-				w.ifGene = w.markers[0].code();
-				w.thenGene = w.markers[1].code();
-			} else {
-				w.ifGene = w.markers[1].code();
-				w.thenGene = w.markers[0].code();
-			}
-			plasmidInserted(w);
-			var text = "\n\n\nIf " + genes[w.ifGene - 1] + ", this bacteria " + genes[w.thenGene - 1] + "!";
-			w.textW.setText(text);
-		}
-	});
+	// 	if (isValidPlasmid(w.markers)) {
+	// 		if (codeType(w.markers[0].code()) == 0) {
+	// 			w.ifGene = w.markers[0].code();
+	// 			w.thenGene = w.markers[1].code();
+	// 		} else {
+	// 			w.ifGene = w.markers[1].code();
+	// 			w.thenGene = w.markers[0].code();
+	// 		}
+	// 		plasmidInserted(w);
+	// 		var text = "\n\n\nIf " + genes[w.ifGene - 1] + ", this bacteria " + genes[w.thenGene - 1] + "!";
+	// 		w.textW.setText(text);
+	// 	}
+	// });
 
-	w.markerSensor.onMarkerUp(function(id_as_string) {
-		var idAsInt = parseInt(id_as_string);
-		var gm = $.app.grabManager();
-		var marker = gm.findMarker(idAsInt);
-		w.markers.pop(w.markers.indexOf(marker), 1);
-	});
+	// w.markerSensor.onMarkerUp(function(id_as_string) {
+	// 	var idAsInt = parseInt(id_as_string);
+	// 	var gm = $.app.grabManager();
+	// 	var marker = gm.findMarker(idAsInt);
+	// 	w.markers.pop(w.markers.indexOf(marker), 1);
+	// });
 
 	w.textW = new MultiWidgets.TextWidget();
 
@@ -285,13 +285,62 @@ function createPetriDish(x, y, rotation, flaskSide) {
 
 	w.bacBabe = createBacBabe(w, w.width() / 2, w.height() / 2, w.width() / 4, w.height() / 4);
 
-	w.addChild(w.markerSensor);
-	w.markerSensor.raiseToTop();
-
 	w.addChild(w.tip);
 	w.tip.raiseToTop();
 
+	w.markerSensor = createMarkerSensor(w);
+	w.addChild(w.markerSensor);
+	w.markerSensor.raiseToTop();
+
 	return w;
+}
+
+function createMarkerSensor(w) {
+
+	var markerSensor = new MultiWidgets.JavaScriptWidget();
+
+	markerSensor.setLocation(0, 0);
+	markerSensor.setWidth(petriDishW);
+	markerSensor.setHeight(petriDishH);
+	markerSensor.setFixed();
+
+	markerSensor.setBackgroundColor(1, 0, 0, 0.5);
+
+	markerSensor.onMarkerDown(function(id_as_string) {
+		var idAsInt = parseInt(id_as_string);
+		var gm = $.app.grabManager();
+		var marker = gm.findMarker(idAsInt);
+		w.markers.push(marker);
+		if (w.markers.length > 2) console.log("something went wrong; marker array longer than 2");
+
+		if (isValidPlasmid(w.markers)) {
+			if (codeType(w.markers[0].code()) == 0) {
+				w.ifGene = w.markers[0].code();
+				w.thenGene = w.markers[1].code();
+			} else {
+				w.ifGene = w.markers[1].code();
+				w.thenGene = w.markers[0].code();
+			}
+			plasmidInserted(w);
+			var text = "\n\n\nIf " + genes[w.ifGene - 1] + ", this bacteria " + genes[w.thenGene - 1] + "!";
+			w.textW.setText(text);
+		}
+	});
+
+	markerSensor.onMarkerUp(function(id_as_string) {
+		var idAsInt = parseInt(id_as_string);
+		var gm = $.app.grabManager();
+		var marker = gm.findMarker(idAsInt);
+		w.markers.pop(w.markers.indexOf(marker), 1);
+	});
+
+	// markerSensor.onSingleTap(function(id_as_string) {
+	// 	console.log("test");
+	// 	markerSensor.setBackgroundColor(1, 1, 0, 0.5);
+	// });
+
+
+	return markerSensor;
 }
 
 function plasmidInserted(w) {
@@ -316,6 +365,7 @@ function plasmidInserted(w) {
 	w.tip.image.load("bubble2.png");
 	w.addChild(w.tip);
 	w.tip.raiseToTop();
+	w.markers = [];
 
 }
 
@@ -327,10 +377,10 @@ function plasmidCleared(w) {
 	w.removeChild(w.flask);
 	w.tip.image.load("bubble0.png");
 	if (w.hasChild(w.textW)) w.removeChild(w.textW);
-	// if (w.hasChild(w.tip)) w.removeChild(w.tip);
 	w.hasPlasmid = false;
 	w.ifGene = null;
 	w.thenGene = null;
+	w.markerSensor = createMarkerSensor(w);
 	w.addChild(w.markerSensor);
 	w.markerSensor.raiseToTop();
 }
