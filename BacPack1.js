@@ -375,6 +375,7 @@ function plasmidCleared(w) {
 	w.removeChild(w.infoButton);
 	w.removeChild(w.bacBabe);
 	w.removeChild(w.flask);
+	resetFlask(w.flask, w);
 	w.tip.image.load("bubble0.png");
 	if (w.hasChild(w.textW)) w.removeChild(w.textW);
 	w.hasPlasmid = false;
@@ -551,112 +552,225 @@ function createFlask(petriDish, width, height, x, y, xySwapped) {
 	w.onUpdate(function(frameInfo) {
 
 		if (w.status == 0 && petriDish.bacBabe.animation.intersects(w)) {
-			if (w.animation.load("MARSdivide")) {
-		    	w.animation.raiseToTop();
-		    	w.animation.play(false);
-			}
-			w.removeChild(w.partGlow);
-			petriDish.removeChild(petriDish.tip);
-			petriDish.bacBabe.animation.setFixed();
-			w.status = 1;
+			divideFlask(w, petriDish);
+			// if (w.animation.load("MARSdivide")) {
+		 //    	w.animation.raiseToTop();
+		 //    	w.animation.play(false);
+			// }
+			// w.removeChild(w.partGlow);
+			// petriDish.removeChild(petriDish.tip);
+			// petriDish.bacBabe.animation.setFixed();
+			// w.status = 1;
 		}
 
 		if (w.status == 1 && !w.animation.isPlaying()) {
-			if (w.animation.load("MARSidle")) {
-				w.animation.play(false);
-				w.animation.setLoopMode(MultiWidgets.ImageMovieWidget.LoopMode.LOOPING);
-				w.animation.raiseInputFlags(MultiWidgets.Widget.InputFlags.INPUT_TRANSLATE);
-			}
-			petriDish.tip.image.load("bubble3.png");
-			petriDish.addChild(petriDish.tip);
-			petriDish.tip.raiseToTop();
-			w.status = 2;
+			idleFlask(w, petriDish);
+			// if (w.animation.load("MARSidle")) {
+			// 	w.animation.play(false);
+			// 	w.animation.setLoopMode(MultiWidgets.ImageMovieWidget.LoopMode.LOOPING);
+			// 	w.animation.raiseInputFlags(MultiWidgets.Widget.InputFlags.INPUT_TRANSLATE);
+			// }
+			// petriDish.tip.image.load("bubble3.png");
+			// petriDish.addChild(petriDish.tip);
+			// petriDish.tip.raiseToTop();
+			// w.status = 2;
 		}
 
 		if (w.status == 2) {
-			var dist, initialRotation;
+			pourFlask(w, petriDish);
+			// var dist, initialRotation;
 
-			if (w.xySwapped == 1) {
-				w.absoluteX = petriDish.x() - w.y() - w.animation.y() - w.animation.height();
-				w.absoluteY = petriDish.y() + w.x() + w.animation.x() + w.animation.width() / 2;
-				initialRotation = Math.PI / 2;
-				dist = getDistanceBetween(w.absoluteX, w.absoluteY, midpointX, 0);
-			}
-			else if (w.xySwapped == -1) {
-				w.absoluteX =petriDish.x() + w.y() + w.animation.y() + w.animation.height();
-				w.absoluteY = petriDish.y() - w.x() - w.animation.x() - w.animation.width() / 2;
-				initialRotation = 3 * Math.PI / 2;
-				dist = getDistanceBetween(w.absoluteX, w.absoluteY, midpointX, 0);
+			// if (w.xySwapped == 1) {
+			// 	w.absoluteX = petriDish.x() - w.y() - w.animation.y() - w.animation.height();
+			// 	w.absoluteY = petriDish.y() + w.x() + w.animation.x() + w.animation.width() / 2;
+			// 	initialRotation = Math.PI / 2;
+			// 	dist = getDistanceBetween(w.absoluteX, w.absoluteY, midpointX, 0);
+			// }
+			// else if (w.xySwapped == -1) {
+			// 	w.absoluteX = petriDish.x() + w.y() + w.animation.y() + w.animation.height();
+			// 	w.absoluteY = petriDish.y() - w.x() - w.animation.x() - w.animation.width() / 2;
+			// 	initialRotation = 3 * Math.PI / 2;
+			// 	dist = getDistanceBetween(w.absoluteX, w.absoluteY, midpointX, 0);
 
-			} else {
-				w.absoluteX = petriDish.x() + w.x() + w.animation.x() + w.animation.width() / 2;
-				w.absoluteY = petriDish.y() + w.y() + w.animation.y() + w.animation.height();
-				initialRotation = 0;
-				dist = getDistanceBetween(w.absoluteX, w.absoluteY, midpointX, 0);
-			}
+			// } else {
+			// 	w.absoluteX = petriDish.x() + w.x() + w.animation.x() + w.animation.width() / 2;
+			// 	w.absoluteY = petriDish.y() + w.y() + w.animation.y() + w.animation.height();
+			// 	initialRotation = 0;
+			// 	dist = getDistanceBetween(w.absoluteX, w.absoluteY, midpointX, 0);
+			// }
 
-			if (dist < distanceToMarsCenter) {
-				var lengthA = w.absoluteY;
-				var lengthB = midpointX - w.absoluteX;
-				var theta = Math.atan(lengthA / lengthB);
-				w.newRotation = - theta - (unsign(theta) * Math.PI / 2) - initialRotation;
-				w.animation.setRotationAboutCenter(w.newRotation);
+			// if (dist < distanceToMarsCenter) {
+			// 	var lengthA = w.absoluteY;
+			// 	var lengthB = midpointX - w.absoluteX;
+			// 	var theta = Math.atan(lengthA / lengthB);
+			// 	w.newRotation = - theta - (unsign(theta) * Math.PI / 2) - initialRotation;
+			// 	w.animation.setRotationAboutCenter(w.newRotation);
 
-				if (w.animation.load("MARSpour")) {
-					w.animation.raiseToTop();
-					w.animation.play(false);
-					w.animation.setLoopMode(MultiWidgets.ImageMovieWidget.LoopMode.NO_LOOP);
-					w.setLocation(w.x() + w.animation.x(), w.y() + w.animation.y());
-					w.animation.setLocation(0, 0);
-					w.animation.setFixed();
-					w.animation.setScale(1.1);
-				}
-				w.status = 3;
+			// 	if (w.animation.load("MARSpour")) {
+			// 		w.animation.raiseToTop();
+			// 		w.animation.play(false);
+			// 		w.animation.setLoopMode(MultiWidgets.ImageMovieWidget.LoopMode.NO_LOOP);
+			// 		w.setLocation(w.x() + w.animation.x(), w.y() + w.animation.y());
+			// 		w.animation.setLocation(0, 0);
+			// 		w.animation.setFixed();
+			// 		w.animation.setScale(1.1);
+			// 	}
+			// 	w.status = 3;
 
-				petriDish.removeChild(petriDish.tip);
-			}
+			// 	petriDish.removeChild(petriDish.tip);
+			// }
 		}
 
 		if (w.status == 3 && !w.animation.isPlaying()) {
-			
-			if (w.xySwapped == 1) {
-				w.absoluteX = petriDish.x() - w.y() - w.animation.y();
-				w.absoluteY = petriDish.y() + w.x() + w.animation.x();
-			}
-			else if (w.xySwapped == -1) {
-				w.absoluteX =petriDish.x() + w.y() + w.animation.y();
-				w.absoluteY = petriDish.y() - w.x() - w.animation.x();
+			emptyFlask(w, petriDish);
+			// if (w.xySwapped == 1) {
+			// 	w.absoluteX = petriDish.x() - w.y() - w.animation.y();
+			// 	w.absoluteY = petriDish.y() + w.x() + w.animation.x();
+			// }
+			// else if (w.xySwapped == -1) {
+			// 	w.absoluteX =petriDish.x() + w.y() + w.animation.y();
+			// 	w.absoluteY = petriDish.y() - w.x() - w.animation.x();
 
-			} else {
-				w.absoluteX = petriDish.x() + w.x() + w.animation.x();
-				w.absoluteY = petriDish.y() + w.y() + w.animation.y();
-			}
+			// } else {
+			// 	w.absoluteX = petriDish.x() + w.x() + w.animation.x();
+			// 	w.absoluteY = petriDish.y() + w.y() + w.animation.y();
+			// }
 
-			var marsBac = createMarsBacteria(w.width() / 2, w.height() / 2, w.absoluteX, w.absoluteY, w.newRotation);
-			root.addChild(marsBac);
-			marsBac.raiseToTop();
+			// var marsBac = createMarsBacteria(w.width() / 2, w.height() / 2, w.absoluteX, w.absoluteY, w.newRotation);
+			// root.addChild(marsBac);
+			// marsBac.raiseToTop();
 
-			changeStatusBar(petriDish.thenGene - 6, 10);
+			// changeStatusBar(petriDish.thenGene - 6, 10);
 
-			if (w.animation.load("MARSempty")) {
-				w.setLocation(w.xOrig, w.yOrig);
-				w.animation.setLocation(0, 0);
-				w.animation.setFixed();
-				w.animation.setRotationAboutCenter(0);
-			}
-			petriDish.tip.image.load("bubble4.png");
-			petriDish.addChild(petriDish.tip);
-			petriDish.tip.raiseToTop();
+			// if (w.animation.load("MARSempty")) {
+			// 	w.setLocation(w.xOrig, w.yOrig);
+			// 	w.animation.setLocation(0, 0);
+			// 	w.animation.setFixed();
+			// 	w.animation.setRotationAboutCenter(0);
+			// }
+			// petriDish.tip.image.load("bubble4.png");
+			// petriDish.addChild(petriDish.tip);
+			// petriDish.tip.raiseToTop();
 
-			w.addChild(w.partGlow);
-			petriDish.bacBabe.animation.raiseInputFlags(MultiWidgets.Widget.InputFlags.INPUT_TRANSLATE);
-			w.status = 0;
+			// w.addChild(w.partGlow);
+			// petriDish.bacBabe.animation.raiseInputFlags(MultiWidgets.Widget.InputFlags.INPUT_TRANSLATE);
+			// w.status = 0;
 		}
 
 	});
 	
 	return w;
 
+}
+
+function resetFlask(w, petriDish) {
+
+	w.status = 0;
+	w.animation.load("MARSempty");
+	w.addChild(w.partGlow);
+
+}
+
+function divideFlask(w, petriDish) {
+	if (w.animation.load("MARSdivide")) {
+    	w.animation.raiseToTop();
+    	w.animation.play(false);
+	}
+	w.removeChild(w.partGlow);
+	petriDish.removeChild(petriDish.tip);
+	petriDish.bacBabe.animation.setFixed();
+	w.status = 1;
+}
+
+function idleFlask(w, petriDish) {
+	if (w.animation.load("MARSidle")) {
+		w.animation.play(false);
+		w.animation.setLoopMode(MultiWidgets.ImageMovieWidget.LoopMode.LOOPING);
+		w.animation.raiseInputFlags(MultiWidgets.Widget.InputFlags.INPUT_TRANSLATE);
+	}
+	petriDish.tip.image.load("bubble3.png");
+	petriDish.addChild(petriDish.tip);
+	petriDish.tip.raiseToTop();
+	w.status = 2;
+}
+
+function pourFlask(w, petriDish) {
+	var dist, initialRotation;
+
+	if (w.xySwapped == 1) {
+		w.absoluteX = petriDish.x() - w.y() - w.animation.y() - w.animation.height();
+		w.absoluteY = petriDish.y() + w.x() + w.animation.x() + w.animation.width() / 2;
+		initialRotation = Math.PI / 2;
+		dist = getDistanceBetween(w.absoluteX, w.absoluteY, midpointX, 0);
+	}
+	else if (w.xySwapped == -1) {
+		w.absoluteX = petriDish.x() + w.y() + w.animation.y() + w.animation.height();
+		w.absoluteY = petriDish.y() - w.x() - w.animation.x() - w.animation.width() / 2;
+		initialRotation = 3 * Math.PI / 2;
+		dist = getDistanceBetween(w.absoluteX, w.absoluteY, midpointX, 0);
+
+	} else {
+		w.absoluteX = petriDish.x() + w.x() + w.animation.x() + w.animation.width() / 2;
+		w.absoluteY = petriDish.y() + w.y() + w.animation.y() + w.animation.height();
+		initialRotation = 0;
+		dist = getDistanceBetween(w.absoluteX, w.absoluteY, midpointX, 0);
+	}
+
+	if (dist < distanceToMarsCenter) {
+		var lengthA = w.absoluteY;
+		var lengthB = midpointX - w.absoluteX;
+		var theta = Math.atan(lengthA / lengthB);
+		w.newRotation = - theta - (unsign(theta) * Math.PI / 2) - initialRotation;
+		w.animation.setRotationAboutCenter(w.newRotation);
+
+		if (w.animation.load("MARSpour")) {
+			w.animation.raiseToTop();
+			w.animation.play(false);
+			w.animation.setLoopMode(MultiWidgets.ImageMovieWidget.LoopMode.NO_LOOP);
+			w.setLocation(w.x() + w.animation.x(), w.y() + w.animation.y());
+			w.animation.setLocation(0, 0);
+			w.animation.setFixed();
+			w.animation.setScale(1.1);
+		}
+		w.status = 3;
+
+		petriDish.removeChild(petriDish.tip);
+	}
+}
+
+function emptyFlask(w, petriDish) {
+	if (w.xySwapped == 1) {
+		w.absoluteX = petriDish.x() - w.y() - w.animation.y();
+		w.absoluteY = petriDish.y() + w.x() + w.animation.x();
+	}
+	else if (w.xySwapped == -1) {
+		w.absoluteX =petriDish.x() + w.y() + w.animation.y();
+		w.absoluteY = petriDish.y() - w.x() - w.animation.x();
+
+	} else {
+		w.absoluteX = petriDish.x() + w.x() + w.animation.x();
+		w.absoluteY = petriDish.y() + w.y() + w.animation.y();
+	}
+
+	var marsBac = createMarsBacteria(w.width() / 2, w.height() / 2, w.absoluteX, w.absoluteY, w.newRotation);
+	root.addChild(marsBac);
+	marsBac.raiseToTop();
+
+	changeStatusBar(petriDish.thenGene - 6, 10);
+
+	if (w.animation.load("MARSempty")) {
+		w.setLocation(w.xOrig, w.yOrig);
+		w.animation.setLocation(0, 0);
+		w.animation.setFixed();
+		w.animation.setRotationAboutCenter(0);
+	}
+	petriDish.tip.image.load("bubble4.png");
+	petriDish.addChild(petriDish.tip);
+	petriDish.tip.raiseToTop();
+
+	w.addChild(w.partGlow);
+	petriDish.bacBabe.animation.raiseInputFlags(MultiWidgets.Widget.InputFlags.INPUT_TRANSLATE);
+	w.status = 0;
 }
 
 function createInfoTab(x, y, rotation) {
