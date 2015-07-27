@@ -312,12 +312,12 @@ function createPetriDish(x, y, rotation, flaskSide) {
 
 	if (w.flaskSide == 0) {
 		w.flask = createFlask(w, w.width() / 2, w.height() / 2, - w.width() / 2, 0, w.xySwapped);
-		w.tip = createTabbedPanel(2 * w.width() / 3, 2 * w.height() / 3, w.width(), w.height() / 5);
+		w.tip = createTabbedPanel(3 * w.width() / 4, 3 * w.height() / 4, w.width(), w.height() / 6);
 		w.infoButton = createInfoButton(w, petriDishW / 3 - buttonW / 2, - buttonH / 2);
 		w.clearButton = createClearButton(w, 2 * petriDishW / 3 - buttonW / 2, - buttonH / 2);
 	} else {
 		w.flask = createFlask(w, w.width() / 2, w.height() / 2, petriDishW, 0, w.xySwapped);
-		w.tip = createTabbedPanel(2 * w.width() / 3, 2 * w.height() / 3, - 2 * w.width() / 3, w.height() / 5);
+		w.tip = createTabbedPanel(3 * w.width() / 4, 3 * w.height() / 4, - 3 * w.width() / 4, w.height() / 6);
 		w.infoButton = createInfoButton(w, 2 * petriDishW / 3 - buttonW / 2, - buttonH / 2);
 		w.clearButton = createClearButton(w, petriDishW / 3 - buttonW / 2, - buttonH / 2);
 	}
@@ -611,36 +611,6 @@ function createMarsBacteria(width, height, resource, color) {
 
 }
 
-function createSideInfo(width, height, x, y) {
-
-	var w = new MultiWidgets.JavaScriptWidget();
-
-	w.setWidth(width);
-	w.setHeight(height);
-	w.setLocation(x, y);
-	w.setFixed();
-	w.setAutoRaiseToTop(false);
-	w.setBackgroundColor(0, 0, 0, 0);
-
-	w.infoTab = createInstructionTab(width, height, 0, 0);
-	w.videoTab = createVideoTab(width, height, 0, 0);
-	w.iGEMTab = createiGEMTab(width, height, 0, 0);
-
-	w.infoButton = createTabButton(w, w.width() / 4, w.height() / 4, w.width() / 4, w.height(), "info.png", w.infoTab);
-	w.videoButton = createTabButton(w, w.width() / 4, w.height() / 4, w.width() / 2, w.height(), "play.png", w.videoTab);
-	w.iGEMButton = createTabButton(w, w.width() / 4, w.height() / 4, 3 * w.width() / 4, w.height(), "iGEM.png", w.iGEMTab);
-
-	w.addChild(w.infoButton);
-	w.addChild(w.videoButton);
-	w.addChild(w.iGEMButton);
-
-	w.addChild(w.infoTab);
-	w.addChild(w.videoTab);
-	w.addChild(w.iGEMTab);
-
-	return w;
-}
-
 function createTabButton(sideInfo, width, height, x, y, image, tab) {
 
 	var w = new MultiWidgets.JavaScriptWidget();
@@ -680,10 +650,37 @@ function createInstructionTab(width, height, x, y) {
 	w.resizeToFit(new Nimble.SizeF(w.width(), w.height()));
    	w.setAutoRaiseToTop(false);
 
-	w.load("tab1.png");
+	w.load("tab1new.png");
+
+	w.textBox = createInstructionBox(4 * w.width() / 5, 2 * w.height() / 3, w.width() / 10, w.height() / 4);
+
+	w.addChild(w.textBox);
+	w.textBox.raiseToTop();
 
 	return w;
 
+}
+
+function createInstructionBox(width, height, x, y) {
+
+	var w = new MultiWidgets.TextWidget();
+
+	w.setWidth(width);
+	w.setHeight(height);
+	w.setLocation(x, y);
+	w.setBackgroundColor(0, 0, 0, 0);
+	w.setFontSize(20);
+	w.setText("This is some example text that I am writing right now to see if the scroll can work.");
+	w.setStrokeWidth(1);
+	w.setFixed();
+	w.setAllowRotation(false);
+	w.setFontWeight(Stylish.FontWeight.FONT_WEIGHT_BOLD);
+	w.setFontFamily(["Roboto", "Verdana"]);
+	w.setColor(Radiant.Color.fromRGBA(53, 193, 214, 255));
+
+	return w;
+
+	// w.scroll = new MultiWidgets.ScrollAreaWidget();
 }
 
 function createVideoTab(width, height, x, y) {
@@ -698,13 +695,13 @@ function createVideoTab(width, height, x, y) {
 	w.resizeToFit(new Nimble.SizeF(w.width(), w.height()));
    	w.setAutoRaiseToTop(false);
 
-	w.load("tab2.png");
+	w.load("tab2new.png");
 
 	return w;
 
 }
 
-function createiGEMTab(width, height, x, y) {
+function createGeneTab(width, height, x, y) {
 
 	var w = new MultiWidgets.ImageWidget();
 
@@ -716,7 +713,7 @@ function createiGEMTab(width, height, x, y) {
 	w.resizeToFit(new Nimble.SizeF(w.width(), w.height()));
    	w.setAutoRaiseToTop(false);
 
-	w.load("tab3.png");
+	w.load("tab3new.png");
 
 	return w;
 
@@ -735,7 +732,7 @@ function createTabbedPanel(width, height, x, y) {
 
 	w.infoTab = createInstructionTab(width, height, 0, 0);
 	w.videoTab = createVideoTab(width, height, 0, 0);
-	w.iGEMTab = createiGEMTab(width, height, 0, 0);
+	w.iGEMTab = createGeneTab(width, height, 0, 0);
 
 	w.navigationOverlay = createNavigationOverlay(w, w.width(), w.height() / 5, 0, 0);
 
