@@ -887,9 +887,6 @@ function plasmidInserted(w) {
 	w.removeChild(w.plasmidIndication);
 	w.removeChild(w.markerSensor);
 
-	// w.addChild(w.bacBabe);
-	// w.bacBabe.raiseToTop();
-
 	w.bacBabe.color = colors[w.thenGene - 6];
 
 	var plasmidTransform = createPlasmidTransform(w, w.width(), w.height(), 0, 0);
@@ -904,18 +901,23 @@ function plasmidInserted(w) {
 
 function plasmidCleared(w) {
 	w.addChild(w.plasmidIndication);
+
+	w.bacBabe.animation.setLocation(0, 0);
+
 	w.removeChild(w.clearButton);
 	w.removeChild(w.infoButton);
 	w.removeChild(w.bacBabe);
 	w.removeChild(w.flask);
+
 	if (w.flaskSide == 0) {
 		w.flask = createFlask(w, w.width() / 2, w.height() / 2, - w.width() / 2, 0, w.xySwapped);
 	} else {
 		w.flask = createFlask(w, w.width() / 2, w.height() / 2, petriDishW, 0, w.xySwapped);
 	}
-	// w.tip.image.load("bubble0.png");
+
 	if (w.hasChild(w.textW)) w.removeChild(w.textW);
 	if (!w.hasChild(w.tip)) w.addChild(w.tip);
+
 	w.tip.raiseToTop();
 	w.hasPlasmid = false;
 	w.ifGene = null;
@@ -923,6 +925,8 @@ function plasmidCleared(w) {
 	w.markerSensor = createMarkerSensor(w);
 	w.addChild(w.markerSensor);
 	w.markerSensor.raiseToTop();
+
+	w.markers = [];
 }
 
 function resetFlask(w, petriDish) {
@@ -938,8 +942,6 @@ function divideFlask(w, petriDish) {
 	}
 	w.removeChild(w.partGlow);
 	petriDish.removeChild(petriDish.bacBabe);
-	// petriDish.removeChild(petriDish.tip);
-	petriDish.bacBabe.animation.setFixed();
 	w.status = 1;
 }
 
