@@ -68,11 +68,16 @@ Math.floor((Math.random() * 50) + 40)
 ]
 
 var statusBars = [];
+var statusGlows = [];
 
 for (var i = 0; i < statusLevels.length; i++) {
 	statusBars[i] = createStatusBarRectangle(i, 538 + (i * (statusBarW + 90)), 36);
 	root.addChild(statusBars[i]);
 	statusBars[i].raiseToTop();
+
+	statusGlows[i] = createStatusGlow(i, 538 + (i * (statusBarW + 90)), 36);
+	root.addChild(statusGlows[i]);
+	statusGlows[i].raiseToTop();
 }
 
 //0 - oxygen, 1 - water, 2 - food, 3 - heat, 4 - fuel
@@ -80,10 +85,10 @@ for (var i = 0; i < statusLevels.length; i++) {
 var environment = createEnvironment();
 root.addChild(environment);
 
-var petri1 = createPetriDish(distanceToEdge, rootH / 5, Math.PI / 2, 1);
-var petri2 = createPetriDish((3 * rootW / 4) - (petriDishW / 2), rootH - distanceToEdge - petriDishH, 0, 0);
-var petri3 = createPetriDish((rootW / 4) - (petriDishW / 2), rootH - distanceToEdge - petriDishH, 0, 1);
-var petri4 = createPetriDish(rootW - distanceToEdge - petriDishW, rootH / 5, 3 * Math.PI / 2, 0);
+var petri1 = createPetriDish(distanceToEdge, rootH / 4, Math.PI / 2, 1);
+var petri2 = createPetriDish((2 * rootW / 7) - (petriDishW / 2), rootH - distanceToEdge - petriDishH, 0, 1);
+var petri3 = createPetriDish((5 * rootW / 7) - (petriDishW / 2), rootH - distanceToEdge - petriDishH, 0, 0);
+var petri4 = createPetriDish(rootW - distanceToEdge - petriDishW, rootH / 4, 3 * Math.PI / 2, 0);
 
 root.addChild(petri1);
 root.addChild(petri2);
@@ -95,9 +100,6 @@ petri2.raiseToTop();
 petri3.raiseToTop();
 petri4.raiseToTop();
 
-var infoTab = createInfoTab(rootW / 2 - tabW / 2, rootH - tabH, 0);
-root.addChild(infoTab);
-infoTab.raiseToTop();
 
 //---------------------------------------------------------------------------
 //--------------------Constructor Functions for All Widgets------------------
@@ -133,14 +135,6 @@ function createEnvironment() {
 	return w;
 }
 
-function changeStatusBar(n, delta) {
-	statusLevels[n] += delta;
-	if (statusLevels[n] < 0) statusLevels[n] = 0;
-	if (statusLevels[n] > 100) statusLevels[n] = 100;
-}
-
-
-
 function createStatusBarRectangle(n, x, y) {
 
 	var w = new MultiWidgets.JavaScriptWidget();
@@ -157,6 +151,22 @@ function createStatusBarRectangle(n, x, y) {
 		w.setWidth(statusBarW * (100 - statusLevels[n]) / 100);
 		w.setX(w.xOrig + (statusBarW * (statusLevels[n]) / 100));
 	});
+
+	return w;
+}
+
+function createStatusGlow(n, x, y) {
+	var w = new MultiWidgets.ImageMovieWidget();
+
+	if (w.load("marsStatusGlow2")) {
+		w.setLocation(x - (1 * statusBarW / 8), y - statusBarH);
+		w.setWidth(statusBarW * 1.3);
+		w.setHeight(statusBarH * 3);
+		w.setFixed();
+		w.setBackgroundColor(0, 0, 0, 0);
+		w.setFPS(30);
+		w.setLoopMode(MultiWidgets.ImageMovieWidget.LoopMode.NO_LOOP);
+	}
 
 	return w;
 }
@@ -199,41 +209,6 @@ function createPetriDish(x, y, rotation, flaskSide) {
 	w.ifGene = null;
 	w.thenGene = null;
 
-	// w.markerSensor = new MultiWidgets.JavaScriptWidget();
-	// w.markerSensor.setLocation(0, 0);
-	// w.markerSensor.setWidth(petriDishW);
-	// w.markerSensor.setHeight(petriDishH);
-	// w.markerSensor.setFixed();
-
-	// w.markerSensor.setBackgroundColor(1, 0, 0, 0.5);
-
-	// w.markerSensor.onMarkerDown(function(id_as_string) {
-	// 	var idAsInt = parseInt(id_as_string);
-	// 	var gm = $.app.grabManager();
-	// 	var marker = gm.findMarker(idAsInt);
-	// 	w.markers.push(marker);
-
-	// 	if (isValidPlasmid(w.markers)) {
-	// 		if (codeType(w.markers[0].code()) == 0) {
-	// 			w.ifGene = w.markers[0].code();
-	// 			w.thenGene = w.markers[1].code();
-	// 		} else {
-	// 			w.ifGene = w.markers[1].code();
-	// 			w.thenGene = w.markers[0].code();
-	// 		}
-	// 		plasmidInserted(w);
-	// 		var text = "\n\n\nIf " + genes[w.ifGene - 1] + ", this bacteria " + genes[w.thenGene - 1] + "!";
-	// 		w.textW.setText(text);
-	// 	}
-	// });
-
-	// w.markerSensor.onMarkerUp(function(id_as_string) {
-	// 	var idAsInt = parseInt(id_as_string);
-	// 	var gm = $.app.grabManager();
-	// 	var marker = gm.findMarker(idAsInt);
-	// 	w.markers.pop(w.markers.indexOf(marker), 1);
-	// });
-
 	w.textW = new MultiWidgets.TextWidget();
 
 	w.textW.setWidth(w.width());
@@ -248,8 +223,6 @@ function createPetriDish(x, y, rotation, flaskSide) {
 	w.textW.setFontWeight(Stylish.FontWeight.FONT_WEIGHT_BOLD);
 	w.textW.setFontFamily(["Roboto", "Verdana"]);
 	w.textW.setColor(Radiant.Color.fromRGBA(53, 193, 214, 255));
-
-
 
 	w.xButton = new MultiWidgets.ImageWidget();
 
@@ -273,12 +246,12 @@ function createPetriDish(x, y, rotation, flaskSide) {
 
 	if (w.flaskSide == 0) {
 		w.flask = createFlask(w, w.width() / 2, w.height() / 2, - w.width() / 2, 0, w.xySwapped);
-		w.tip = createTip(w.width() / 2, w.height() / 2, w.width() + w.width() / 40, w.height() / 4);
+		w.tip = createTabbedPanel(2 * w.width() / 3, 2 * w.height() / 3, w.width(), w.height() / 5);
 		w.infoButton = createInfoButton(w, petriDishW / 3 - buttonW / 2, - buttonH / 2);
 		w.clearButton = createClearButton(w, 2 * petriDishW / 3 - buttonW / 2, - buttonH / 2);
 	} else {
 		w.flask = createFlask(w, w.width() / 2, w.height() / 2, petriDishW, 0, w.xySwapped);
-		w.tip = createTip(w.width() / 2, w.height() / 2, - w.width() / 2  - w.width() / 40, w.height() / 4);
+		w.tip = createTabbedPanel(2 * w.width() / 3, 2 * w.height() / 3, - 2 * w.width() / 3, w.height() / 5);
 		w.infoButton = createInfoButton(w, 2 * petriDishW / 3 - buttonW / 2, - buttonH / 2);
 		w.clearButton = createClearButton(w, petriDishW / 3 - buttonW / 2, - buttonH / 2);
 	}
@@ -295,6 +268,7 @@ function createPetriDish(x, y, rotation, flaskSide) {
 	return w;
 }
 
+
 function createMarkerSensor(w) {
 
 	var markerSensor = new MultiWidgets.JavaScriptWidget();
@@ -304,14 +278,14 @@ function createMarkerSensor(w) {
 	markerSensor.setHeight(petriDishH);
 	markerSensor.setFixed();
 
-	markerSensor.setBackgroundColor(1, 0, 0, 0.5);
+	markerSensor.setBackgroundColor(1, 0, 0, 0);
 
 	markerSensor.onMarkerDown(function(id_as_string) {
 		var idAsInt = parseInt(id_as_string);
 		var gm = $.app.grabManager();
 		var marker = gm.findMarker(idAsInt);
 		w.markers.push(marker);
-		if (w.markers.length > 2) console.log("something went wrong; marker array longer than 2");
+		//if (w.markers.length > 2) console.log("something went wrong; marker array longer than 2");
 
 		if (isValidPlasmid(w.markers)) {
 			if (codeType(w.markers[0].code()) == 0) {
@@ -334,57 +308,9 @@ function createMarkerSensor(w) {
 		w.markers.pop(w.markers.indexOf(marker), 1);
 	});
 
-	// markerSensor.onSingleTap(function(id_as_string) {
-	// 	console.log("test");
-	// 	markerSensor.setBackgroundColor(1, 1, 0, 0.5);
-	// });
-
-
 	return markerSensor;
 }
 
-function plasmidInserted(w) {
-
-	w.removeChild(w.plasmidIndication);
-	w.removeChild(w.markerSensor);
-
-	w.addChild(w.clearButton);
-	w.clearButton.raiseToTop();
-
-	w.addChild(w.infoButton);
-	w.infoButton.raiseToTop();
-
-	w.addChild(w.bacBabe);
-	w.bacBabe.raiseToTop();
-
-	w.addChild(w.flask);
-	w.flask.raiseToTop();
-
-	w.hasPlasmid = true;
-
-	w.tip.image.load("bubble2.png");
-	w.addChild(w.tip);
-	w.tip.raiseToTop();
-	w.markers = [];
-
-}
-
-function plasmidCleared(w) {
-	w.addChild(w.plasmidIndication);
-	w.removeChild(w.clearButton);
-	w.removeChild(w.infoButton);
-	w.removeChild(w.bacBabe);
-	w.removeChild(w.flask);
-	resetFlask(w.flask, w);
-	w.tip.image.load("bubble0.png");
-	if (w.hasChild(w.textW)) w.removeChild(w.textW);
-	w.hasPlasmid = false;
-	w.ifGene = null;
-	w.thenGene = null;
-	w.markerSensor = createMarkerSensor(w);
-	w.addChild(w.markerSensor);
-	w.markerSensor.raiseToTop();
-}
 
 function createClearButton(petriDish, x, y) {
 
@@ -412,6 +338,7 @@ function createClearButton(petriDish, x, y) {
 
 	return w;
 }
+
 
 function createInfoButton(petriDish, x, y) {
 
@@ -529,10 +456,13 @@ function createFlask(petriDish, width, height, x, y, xySwapped) {
 
 	w.partGlow = new MultiWidgets.ImageMovieWidget();
 
-	if (w.partGlow.load("MARSglow")) {
-	    w.partGlow.setWidth(w.width() / 2);
-		w.partGlow.setHeight(w.height() / 2);
-		w.partGlow.setLocation(w.width() / 4, 2 * w.height() / 5);
+	if (w.partGlow.load("flaskGlow")) {
+		w.partGlow.setWidth(w.width());
+		w.partGlow.setHeight(10 * w.height() / 9);
+		w.partGlow.setLocation(0, - w.height() / 10);
+	 //    w.partGlow.setWidth(w.width() / 2);
+		// w.partGlow.setHeight(w.height() / 2);
+		// w.partGlow.setLocation(w.width() / 4, 2 * w.height() / 5);
     	w.partGlow.setAutoRaiseToTop(false);
     	w.partGlow.setFixed();
     	w.partGlow.setLoopMode(MultiWidgets.ImageMovieWidget.LoopMode.LOOPING);
@@ -553,108 +483,19 @@ function createFlask(petriDish, width, height, x, y, xySwapped) {
 
 		if (w.status == 0 && petriDish.bacBabe.animation.intersects(w)) {
 			divideFlask(w, petriDish);
-			// if (w.animation.load("MARSdivide")) {
-		 //    	w.animation.raiseToTop();
-		 //    	w.animation.play(false);
-			// }
-			// w.removeChild(w.partGlow);
-			// petriDish.removeChild(petriDish.tip);
-			// petriDish.bacBabe.animation.setFixed();
-			// w.status = 1;
 		}
 
 		if (w.status == 1 && !w.animation.isPlaying()) {
 			idleFlask(w, petriDish);
-			// if (w.animation.load("MARSidle")) {
-			// 	w.animation.play(false);
-			// 	w.animation.setLoopMode(MultiWidgets.ImageMovieWidget.LoopMode.LOOPING);
-			// 	w.animation.raiseInputFlags(MultiWidgets.Widget.InputFlags.INPUT_TRANSLATE);
-			// }
-			// petriDish.tip.image.load("bubble3.png");
-			// petriDish.addChild(petriDish.tip);
-			// petriDish.tip.raiseToTop();
-			// w.status = 2;
 		}
 
 		if (w.status == 2) {
 			pourFlask(w, petriDish);
-			// var dist, initialRotation;
-
-			// if (w.xySwapped == 1) {
-			// 	w.absoluteX = petriDish.x() - w.y() - w.animation.y() - w.animation.height();
-			// 	w.absoluteY = petriDish.y() + w.x() + w.animation.x() + w.animation.width() / 2;
-			// 	initialRotation = Math.PI / 2;
-			// 	dist = getDistanceBetween(w.absoluteX, w.absoluteY, midpointX, 0);
-			// }
-			// else if (w.xySwapped == -1) {
-			// 	w.absoluteX = petriDish.x() + w.y() + w.animation.y() + w.animation.height();
-			// 	w.absoluteY = petriDish.y() - w.x() - w.animation.x() - w.animation.width() / 2;
-			// 	initialRotation = 3 * Math.PI / 2;
-			// 	dist = getDistanceBetween(w.absoluteX, w.absoluteY, midpointX, 0);
-
-			// } else {
-			// 	w.absoluteX = petriDish.x() + w.x() + w.animation.x() + w.animation.width() / 2;
-			// 	w.absoluteY = petriDish.y() + w.y() + w.animation.y() + w.animation.height();
-			// 	initialRotation = 0;
-			// 	dist = getDistanceBetween(w.absoluteX, w.absoluteY, midpointX, 0);
-			// }
-
-			// if (dist < distanceToMarsCenter) {
-			// 	var lengthA = w.absoluteY;
-			// 	var lengthB = midpointX - w.absoluteX;
-			// 	var theta = Math.atan(lengthA / lengthB);
-			// 	w.newRotation = - theta - (unsign(theta) * Math.PI / 2) - initialRotation;
-			// 	w.animation.setRotationAboutCenter(w.newRotation);
-
-			// 	if (w.animation.load("MARSpour")) {
-			// 		w.animation.raiseToTop();
-			// 		w.animation.play(false);
-			// 		w.animation.setLoopMode(MultiWidgets.ImageMovieWidget.LoopMode.NO_LOOP);
-			// 		w.setLocation(w.x() + w.animation.x(), w.y() + w.animation.y());
-			// 		w.animation.setLocation(0, 0);
-			// 		w.animation.setFixed();
-			// 		w.animation.setScale(1.1);
-			// 	}
-			// 	w.status = 3;
-
-			// 	petriDish.removeChild(petriDish.tip);
-			// }
 		}
 
 		if (w.status == 3 && !w.animation.isPlaying()) {
 			emptyFlask(w, petriDish);
-			// if (w.xySwapped == 1) {
-			// 	w.absoluteX = petriDish.x() - w.y() - w.animation.y();
-			// 	w.absoluteY = petriDish.y() + w.x() + w.animation.x();
-			// }
-			// else if (w.xySwapped == -1) {
-			// 	w.absoluteX =petriDish.x() + w.y() + w.animation.y();
-			// 	w.absoluteY = petriDish.y() - w.x() - w.animation.x();
-
-			// } else {
-			// 	w.absoluteX = petriDish.x() + w.x() + w.animation.x();
-			// 	w.absoluteY = petriDish.y() + w.y() + w.animation.y();
-			// }
-
-			// var marsBac = createMarsBacteria(w.width() / 2, w.height() / 2, w.absoluteX, w.absoluteY, w.newRotation);
-			// root.addChild(marsBac);
-			// marsBac.raiseToTop();
-
-			// changeStatusBar(petriDish.thenGene - 6, 10);
-
-			// if (w.animation.load("MARSempty")) {
-			// 	w.setLocation(w.xOrig, w.yOrig);
-			// 	w.animation.setLocation(0, 0);
-			// 	w.animation.setFixed();
-			// 	w.animation.setRotationAboutCenter(0);
-			// }
-			// petriDish.tip.image.load("bubble4.png");
-			// petriDish.addChild(petriDish.tip);
-			// petriDish.tip.raiseToTop();
-
-			// w.addChild(w.partGlow);
-			// petriDish.bacBabe.animation.raiseInputFlags(MultiWidgets.Widget.InputFlags.INPUT_TRANSLATE);
-			// w.status = 0;
+			plasmidCleared(petriDish);
 		}
 
 	});
@@ -663,34 +504,375 @@ function createFlask(petriDish, width, height, x, y, xySwapped) {
 
 }
 
-function resetFlask(w, petriDish) {
+function createMarsBacteria(width, height, x, y, rotation) {
+	var w = new MultiWidgets.JavaScriptWidget();
 
-	w.status = 0;
-	w.animation.load("MARSempty");
-	w.addChild(w.partGlow);
+	w.setWidth(width);
+	w.setHeight(height);
+	w.setLocation(x, y);
+	w.setRotationAboutCenter(rotation);
+	w.setFixed();
+	w.setAutoRaiseToTop(false);
+	w.setBackgroundColor(0, 0, 0, 0);
+
+	w.partGlow = new MultiWidgets.ImageMovieWidget();
+
+	if (w.partGlow.load("Yellow/surface")) {
+	    w.partGlow.setWidth(w.width());
+		w.partGlow.setHeight(w.height());
+    	w.partGlow.setAutoRaiseToTop(false);
+    	w.partGlow.setFixed();
+    	w.partGlow.setLoopMode(MultiWidgets.ImageMovieWidget.LoopMode.LOOPING);
+    	w.partGlow.setFPS(20);
+    	w.addChild(w.partGlow);
+    	w.partGlow.raiseToTop();
+	}
+
+	return w;
+}
+
+function createSideInfo(width, height, x, y) {
+
+	var w = new MultiWidgets.JavaScriptWidget();
+
+	w.setWidth(width);
+	w.setHeight(height);
+	w.setLocation(x, y);
+	w.setFixed();
+	w.setAutoRaiseToTop(false);
+	w.setBackgroundColor(0, 0, 0, 0);
+
+	w.infoTab = createInstructionTab(width, height, 0, 0);
+	w.videoTab = createVideoTab(width, height, 0, 0);
+	w.iGEMTab = createiGEMTab(width, height, 0, 0);
+
+	w.infoButton = createTabButton(w, w.width() / 4, w.height() / 4, w.width() / 4, w.height(), "info.png", w.infoTab);
+	w.videoButton = createTabButton(w, w.width() / 4, w.height() / 4, w.width() / 2, w.height(), "play.png", w.videoTab);
+	w.iGEMButton = createTabButton(w, w.width() / 4, w.height() / 4, 3 * w.width() / 4, w.height(), "iGEM.png", w.iGEMTab);
+
+	w.addChild(w.infoButton);
+	w.addChild(w.videoButton);
+	w.addChild(w.iGEMButton);
+
+	w.addChild(w.infoTab);
+	w.addChild(w.videoTab);
+	w.addChild(w.iGEMTab);
+
+	return w;
+}
+
+function createTabButton(sideInfo, width, height, x, y, image, tab) {
+
+	var w = new MultiWidgets.JavaScriptWidget();
+
+	w.setWidth(buttonW);
+	w.setHeight(buttonH);
+	w.setFixed();
+	w.setLocation(x, y);
+	w.setBackgroundColor(0, 0, 0, 0);
+
+	w.image = new MultiWidgets.ImageWidget();
+
+	if (w.image.load(image)) {
+    	w.image.resizeToFit(new Nimble.SizeF(w.width(), w.height()));
+    	w.image.setFixed();
+    	w.image.setAutoRaiseToTop(false);
+    	w.addChild(w.image);
+    	w.image.raiseToTop();
+	}
+
+	w.image.onSingleTap(function() {
+		tab.raiseToTop();
+		console.log("here " + image);
+	});
+
+	return w;
+}
+
+function createInstructionTab(width, height, x, y) {
+
+	var w = new MultiWidgets.ImageWidget();
+
+	w.setWidth(width);
+	w.setHeight(height);
+	w.setLocation(x, y);
+	w.setFixed();
+	w.setBackgroundColor(0, 0, 0, 0);
+	w.resizeToFit(new Nimble.SizeF(w.width(), w.height()));
+   	w.setAutoRaiseToTop(false);
+
+	w.load("tab1.png");
+
+	return w;
 
 }
 
+function createVideoTab(width, height, x, y) {
+
+	var w = new MultiWidgets.ImageWidget();
+
+	w.setWidth(width);
+	w.setHeight(height);
+	w.setLocation(x, y);
+	w.setFixed();
+	w.setBackgroundColor(0, 0, 0, 0);
+	w.resizeToFit(new Nimble.SizeF(w.width(), w.height()));
+   	w.setAutoRaiseToTop(false);
+
+	w.load("tab2.png");
+
+	return w;
+
+}
+
+function createiGEMTab(width, height, x, y) {
+
+	var w = new MultiWidgets.ImageWidget();
+
+	w.setWidth(width);
+	w.setHeight(height);
+	w.setLocation(x, y);
+	w.setFixed();
+	w.setBackgroundColor(0, 0, 0, 0);
+	w.resizeToFit(new Nimble.SizeF(w.width(), w.height()));
+   	w.setAutoRaiseToTop(false);
+
+	w.load("tab3.png");
+
+	return w;
+
+}
+
+function createTabbedPanel(width, height, x, y) {
+
+	var w = new MultiWidgets.JavaScriptWidget();
+
+	w.setWidth(width);
+	w.setHeight(height);
+	w.setLocation(x, y);
+	w.setFixed();
+	w.setAutoRaiseToTop(false);
+	w.setBackgroundColor(0, 0, 0, 0);
+
+	w.infoTab = createInstructionTab(width, height, 0, 0);
+	w.videoTab = createVideoTab(width, height, 0, 0);
+	w.iGEMTab = createiGEMTab(width, height, 0, 0);
+
+	w.navigationOverlay = createNavigationOverlay(w, w.width(), w.height() / 5, 0, 0);
+
+	w.addChild(w.infoTab);
+	w.addChild(w.videoTab);
+	w.addChild(w.iGEMTab);
+
+	w.addChild(w.navigationOverlay);
+	w.navigationOverlay.raiseToTop();
+
+	return w;
+
+}
+
+
+
+function createNavigationOverlay(tabbedPanel, width, height, x, y) {
+
+	var w = new MultiWidgets.JavaScriptWidget();
+
+	w.setWidth(width);
+	w.setHeight(height);
+	w.setLocation(x, y);
+	w.setFixed();
+	w.setAutoRaiseToTop(false);
+	w.setBackgroundColor(0, 1, 0, 0);
+
+	w.infoButton = createButtonOverlay(width / 3, height, 0, 0, w, tabbedPanel.infoTab);
+	w.videoButton = createButtonOverlay(width / 3, height, w.width() / 3, 0, w, tabbedPanel.videoTab);
+	w.iGEMButton = createButtonOverlay(width / 3, height, 2 * w.width() / 3, 0, w, tabbedPanel.iGEMTab);
+
+	w.addChild(w.infoButton);
+	w.addChild(w.videoButton);
+	w.addChild(w.iGEMButton);
+
+	w.infoButton.raiseToTop();
+	w.videoButton.raiseToTop();
+	w.iGEMButton.raiseToTop();
+
+	return w;
+
+}
+
+function createButtonOverlay(width, height, x, y, parent, tab) {
+
+	var w = new MultiWidgets.JavaScriptWidget();
+
+	w.setWidth(width);
+	w.setHeight(height);
+	w.setLocation(x, y);
+	w.setFixed();
+	w.setBackgroundColor(0, 0, 1, 0);
+
+	w.onSingleTap(function() {
+		tab.raiseToTop();
+		raiseOverlayButtonsToTop(parent);
+	});
+
+	return w;
+}
+
+function createPlasmidTransform(petriDish, width, height, x, y) {
+
+
+	var w = new MultiWidgets.JavaScriptWidget();
+
+	w.setWidth(4 * width / 5);
+	w.setHeight(4 * height / 5);
+	w.setFixed();
+	w.setLocation(x, y);
+	w.setBackgroundColor(0, 0, 0, 0);
+
+	w.animation = new MultiWidgets.ImageMovieWidget();
+
+	if (w.animation.load("Yellow/transform")) {
+	    w.animation.setWidth(w.width());
+		w.animation.setHeight(w.height());
+    	w.animation.setAutoRaiseToTop(false);
+    	w.animation.setFixed();
+    	w.animation.setLoopMode(MultiWidgets.ImageMovieWidget.LoopMode.NO_LOOP);
+    	w.animation.setFPS(10);
+    	w.addChild(w.animation);
+    	w.animation.raiseToTop();
+    	w.animation.play();
+	}
+
+	w.onUpdate(function(frameInfo) {
+		if (!w.animation.isPlaying()) {
+			petriDish.removeChild(w);
+			var plasmidShrink = createPlasmidShrink(petriDish, w.width(), w.height(), w.x(), w.y());
+			petriDish.addChild(plasmidShrink);
+			plasmidShrink.raiseToTop();
+		}
+	});
+
+	return w;
+
+}
+
+function createPlasmidShrink(petriDish, width, height, x, y) {
+
+
+	var w = new MultiWidgets.JavaScriptWidget();
+
+	w.setWidth(width);
+	w.setHeight(height);
+	w.setFixed();
+	w.setLocation(x, y);
+	w.setBackgroundColor(0, 0, 0, 0);
+
+	w.animation = new MultiWidgets.ImageMovieWidget();
+
+	if (w.animation.load("Yellow/shrink")) {
+	    w.animation.setWidth(w.width());
+		w.animation.setHeight(w.height());
+    	w.animation.setAutoRaiseToTop(false);
+    	w.animation.setFixed();
+    	w.animation.setLoopMode(MultiWidgets.ImageMovieWidget.LoopMode.NO_LOOP);
+    	w.animation.setFPS(10);
+    	w.addChild(w.animation);
+    	w.animation.raiseToTop();
+    	w.animation.play();
+	}
+
+	w.onUpdate(function(frameInfo) {
+		if (!w.animation.isPlaying()) {
+			petriDish.removeChild(w);
+			petriDish.addChild(petriDish.bacBabe);
+			petriDish.bacBabe.raiseToTop();
+		}
+	});
+
+	return w;
+
+}
+
+//---------------------------------------------------------------------------
+//--------------------Helper Functions---------------------------------------
+
+function plasmidInserted(w) {
+
+	w.removeChild(w.plasmidIndication);
+	w.removeChild(w.markerSensor);
+
+	w.addChild(w.clearButton);
+	w.clearButton.raiseToTop();
+
+	w.addChild(w.infoButton);
+	w.infoButton.raiseToTop();
+
+	// w.addChild(w.bacBabe);
+	// w.bacBabe.raiseToTop();
+
+	var plasmidTransform = createPlasmidTransform(w, w.width(), w.height(), 0, 0);
+	w.addChild(plasmidTransform);
+	plasmidTransform.raiseToTop();
+
+	w.addChild(w.flask);
+	w.flask.raiseToTop();
+
+	w.hasPlasmid = true;
+
+	w.markers = [];
+
+}
+
+function plasmidCleared(w) {
+	w.addChild(w.plasmidIndication);
+	w.removeChild(w.clearButton);
+	w.removeChild(w.infoButton);
+	w.removeChild(w.bacBabe);
+	w.removeChild(w.flask);
+	if (w.flaskSide == 0) {
+		w.flask = createFlask(w, w.width() / 2, w.height() / 2, - w.width() / 2, 0, w.xySwapped);
+	} else {
+		w.flask = createFlask(w, w.width() / 2, w.height() / 2, petriDishW, 0, w.xySwapped);
+	}
+	// w.tip.image.load("bubble0.png");
+	if (w.hasChild(w.textW)) w.removeChild(w.textW);
+	if (!w.hasChild(w.tip)) w.addChild(w.tip);
+	w.tip.raiseToTop();
+	w.hasPlasmid = false;
+	w.ifGene = null;
+	w.thenGene = null;
+	w.markerSensor = createMarkerSensor(w);
+	w.addChild(w.markerSensor);
+	w.markerSensor.raiseToTop();
+}
+
+function resetFlask(w, petriDish) {
+	w.status = 0;
+	w.animation.load("MARSempty");
+	w.addChild(w.partGlow);
+}
+
 function divideFlask(w, petriDish) {
-	if (w.animation.load("MARSdivide")) {
+	if (w.animation.load("Yellow/divide")) {
     	w.animation.raiseToTop();
     	w.animation.play(false);
 	}
 	w.removeChild(w.partGlow);
-	petriDish.removeChild(petriDish.tip);
+	petriDish.removeChild(petriDish.bacBabe);
+	// petriDish.removeChild(petriDish.tip);
 	petriDish.bacBabe.animation.setFixed();
 	w.status = 1;
 }
 
 function idleFlask(w, petriDish) {
-	if (w.animation.load("MARSidle")) {
+	if (w.animation.load("Yellow/idle")) {
 		w.animation.play(false);
 		w.animation.setLoopMode(MultiWidgets.ImageMovieWidget.LoopMode.LOOPING);
 		w.animation.raiseInputFlags(MultiWidgets.Widget.InputFlags.INPUT_TRANSLATE);
 	}
-	petriDish.tip.image.load("bubble3.png");
-	petriDish.addChild(petriDish.tip);
-	petriDish.tip.raiseToTop();
+	// petriDish.tip.image.load("bubble3.png");
+	// petriDish.addChild(petriDish.tip);
+	// petriDish.tip.raiseToTop();
 	w.status = 2;
 }
 
@@ -723,7 +905,7 @@ function pourFlask(w, petriDish) {
 		w.newRotation = - theta - (unsign(theta) * Math.PI / 2) - initialRotation;
 		w.animation.setRotationAboutCenter(w.newRotation);
 
-		if (w.animation.load("MARSpour")) {
+		if (w.animation.load("Yellow/pour")) {
 			w.animation.raiseToTop();
 			w.animation.play(false);
 			w.animation.setLoopMode(MultiWidgets.ImageMovieWidget.LoopMode.NO_LOOP);
@@ -734,7 +916,7 @@ function pourFlask(w, petriDish) {
 		}
 		w.status = 3;
 
-		petriDish.removeChild(petriDish.tip);
+		// petriDish.removeChild(petriDish.tip);
 	}
 }
 
@@ -764,125 +946,21 @@ function emptyFlask(w, petriDish) {
 		w.animation.setFixed();
 		w.animation.setRotationAboutCenter(0);
 	}
-	petriDish.tip.image.load("bubble4.png");
-	petriDish.addChild(petriDish.tip);
-	petriDish.tip.raiseToTop();
+	// petriDish.tip.image.load("bubble4.png");
+	// petriDish.addChild(petriDish.tip);
+	// petriDish.tip.raiseToTop();
 
 	w.addChild(w.partGlow);
 	petriDish.bacBabe.animation.raiseInputFlags(MultiWidgets.Widget.InputFlags.INPUT_TRANSLATE);
 	w.status = 0;
 }
 
-function createInfoTab(x, y, rotation) {
-
-	var w = new MultiWidgets.JavaScriptWidget();
-
-	w.setLocation(x, y);
-	w.setWidth(tabW);
-	w.setHeight(tabH);
-	w.setRotation(rotation);
-	w.setFixed();
-
-	w.setBackgroundColor(0, 0, 0, 0);
-
-	w.closedHeight = 9 * w.height() / 10;
-
-	//w.image = new MultiWidgets.ImageWidget();
-
-	w.image = new MultiWidgets.TextWidget();
-
-	w.image.setWidth(w.width());
-	w.image.setHeight(4 * w.height() / 5);
-	w.image.setLocation(0, w.closedHeight);
-	w.image.setBackgroundColor(1, 1, 1, 0.9);
-	w.image.setFontSize(15);
-	w.image.setText("   Instructions\n\nYou are a scientist helping explorers on scientific missions. Design and build useful bacteria and deploy them to Mars!\n\nPlay with the different genes to engineer bacteria that can produce useful supplies for the astronauts.\n\nDeploy the bacteria to Mars and check the status bar to see how your bacteria are helping the astronauts!");
-	w.image.setStrokeWidth(1);
-	w.image.setFixed();
-	w.image.raiseInputFlags(MultiWidgets.Widget.InputFlags.INPUT_TRANSLATE_Y);
-	w.image.setAllowRotation(false);
-	w.image.setColor(Radiant.Color.fromRGBA(53, 193, 214, 255));
-	w.addChild(w.image);
-	w.image.raiseToTop();
-	w.image.setFontFamily(["Roboto", "Verdana"]);
-	w.image.setFontWeight(Stylish.FontWeight.FONT_WEIGHT_BOLD);
-
-	// if (w.image.load(infoTabImage)) {
-	//     // w.image.addOperator(new MultiWidgets.StayInsideParentOperator());
- //    	w.image.resizeToFit(new Nimble.SizeF(w.width(), w.height()));
- //    	w.image.setLocation(0, 9 * w.width() / 10);
- //    	w.image.setAutoRaiseToTop(false);
- //    	w.addChild(w.image);
- //    	w.image.raiseToTop();
- //    	w.image.setFixed();
- //    	w.image.raiseInputFlags(MultiWidgets.Widget.InputFlags.INPUT_TRANSLATE_Y);
-	// }
-
-	w.onUpdate(function(frameInfo) {
-		if (w.image.y() < 0) {
-			w.image.setY(0);
-		} else if (w.image.y() > w.closedHeight) {
-			w.image.setY(w.closedHeight);
-		}
-	});
-
-	return w;
-
+function changeStatusBar(n, delta) {
+	statusGlows[n].play(false);
+	statusLevels[n] += delta;
+	if (statusLevels[n] < 0) statusLevels[n] = 0;
+	if (statusLevels[n] > 100) statusLevels[n] = 100;
 }
-
-function createMarsBacteria(width, height, x, y, rotation) {
-	var w = new MultiWidgets.JavaScriptWidget();
-
-	w.setWidth(width);
-	w.setHeight(height);
-	w.setLocation(x, y);
-	w.setRotationAboutCenter(rotation);
-	w.setFixed();
-	w.setAutoRaiseToTop(false);
-	w.setBackgroundColor(0, 0, 0, 0);
-
-	w.partGlow = new MultiWidgets.ImageMovieWidget();
-
-	if (w.partGlow.load("marsSurfaceIdle")) {
-	    w.partGlow.setWidth(w.width());
-		w.partGlow.setHeight(w.height());
-    	w.partGlow.setAutoRaiseToTop(false);
-    	w.partGlow.setFixed();
-    	w.partGlow.setLoopMode(MultiWidgets.ImageMovieWidget.LoopMode.LOOPING);
-    	w.partGlow.setFPS(20);
-    	w.addChild(w.partGlow);
-    	w.partGlow.raiseToTop();
-	}
-
-	return w;
-}
-
-function createTip(width, height, x, y) {
-
-	var w = new MultiWidgets.JavaScriptWidget();
-
-	w.setWidth(width);
-	w.setHeight(height);
-	w.setLocation(x, y);
-	w.setFixed();
-	w.setBackgroundColor(0, 0, 0, 0);
-
-	w.image = new MultiWidgets.ImageWidget();
-
-	if (w.image.load("bubble0.png")) {
-    	w.image.resizeToFit(new Nimble.SizeF(w.width(), w.height()));
-    	w.image.setFixed();
-    	w.image.setAutoRaiseToTop(false);
-    	w.addChild(w.image);
-    	w.image.raiseToTop();
-	}
-
-	return w;
-}
-
-
-//---------------------------------------------------------------------------
-//--------------------Helper Functions---------------------------------------
 
 function isValidPlasmid(marks) {
 	if (marks.length != 2) return false;
@@ -917,5 +995,11 @@ function unsign(n) {
 	return (n >= 0) ? -1 : 1;
 }
 
+function raiseOverlayButtonsToTop(navigationOverlay) {
+	navigationOverlay.raiseToTop();
+	navigationOverlay.infoButton.raiseToTop();
+	navigationOverlay.videoButton.raiseToTop();
+	navigationOverlay.iGEMButton.raiseToTop();
+}
 
 
