@@ -74,7 +74,25 @@ const icons = [
 "icons/light.png",
 "icons/soil.png",
 "icons/ice.png",
-"icons/waste.png"
+"icons/waste.png",
+"icons/O2.png",
+"icons/water.png",
+"icons/food.png",
+"icons/heat.png",
+"icons/fuel.png",
+]
+
+const geneInfo = [
+"The Bielefeld-CeBiTe 2014 iGEM team worked with Carbon Dioxide-sensing genes from Cyanobacteria.",
+"The Brown-Stanford 2011 iGEM team worked with solar energy genes from Cyanobacteria.",
+"The BCCS-Bristol 2010 iGEM team worked with a nitrate sensor for soil found in the prokaryote Nitrosomonas Europaea.",
+"The NTU_Taiwan 2013 iGEM team worked with cold-shock protein promoter genes found naturally in some strains of E. Coli bacteria.",
+"The Alberta 2011 iGEM team worked with waste processing genes found in the mold Neurospora Crassa.",
+"Genes used in oxygen production occur naturally in Cyanobacteria and algae.",
+"Genes used in water production can be found in some Hot Spring Bacteria",
+"The SDU-Denmark 2014 iGEM team worked with food-production protein that they created inside E. Coli cells.",
+"The Valencia 2008 iGEM team worked with temperature increasing bacteria called UCP1 (termogenin).",
+"The Rutgers 2012 iGEM team worked with a biofuel producing mutant strain of E. Coli."
 ]
 
 //---------------------------------------------------------------------------
@@ -312,12 +330,12 @@ function createPetriDish(x, y, rotation, flaskSide) {
 
 	if (w.flaskSide == 0) {
 		w.flask = createFlask(w, w.width() / 2, w.height() / 2, - w.width() / 2, 0, w.xySwapped);
-		w.tip = createTabbedPanel(3 * w.width() / 4, 3 * w.height() / 4, w.width(), w.height() / 6);
+		w.tip = createTabbedPanel(3 * w.width() / 4, 3 * w.height() / 4, w.width(), w.height() / 6, w);
 		w.infoButton = createInfoButton(w, petriDishW / 3 - buttonW / 2, - buttonH / 2);
 		w.clearButton = createClearButton(w, 2 * petriDishW / 3 - buttonW / 2, - buttonH / 2);
 	} else {
 		w.flask = createFlask(w, w.width() / 2, w.height() / 2, petriDishW, 0, w.xySwapped);
-		w.tip = createTabbedPanel(3 * w.width() / 4, 3 * w.height() / 4, - 3 * w.width() / 4, w.height() / 6);
+		w.tip = createTabbedPanel(3 * w.width() / 4, 3 * w.height() / 4, - 3 * w.width() / 4, w.height() / 6, w);
 		w.infoButton = createInfoButton(w, 2 * petriDishW / 3 - buttonW / 2, - buttonH / 2);
 		w.clearButton = createClearButton(w, petriDishW / 3 - buttonW / 2, - buttonH / 2);
 	}
@@ -746,7 +764,6 @@ function createNextButton(box, width, height, x, y) {
 	});
 
 	w.textW.onSingleTap(function() {
-		console.log("next tapped");
 		w.box.status++;
 		w.box.setText(w.box.messages[w.box.status]);
 		if (w.box.status == 3) w.box.removeChild(w);
@@ -818,11 +835,31 @@ function createVideoTab(width, height, x, y) {
 
 	w.load("tab2new.png");
 
+	w.video = createVideoBox(5 * w.width() / 6, w.height() / 2, w.width() / 12, 14.5 * w.height() / 40);
+	w.addChild(w.video);
+	w.video.raiseToTop();
+
+
 	return w;
 
 }
 
-function createGeneTab(width, height, x, y) {
+function createVideoBox(width, height, x, y) {
+
+	var videoW = new MultiWidgets.VideoWidget();
+
+	if (videoW.load("iGEM.mp4")) {
+    	videoW.resizeToFit(new Nimble.SizeF(width, height));
+    	videoW.setLocation(x, y);
+    	videoW.setFixed();
+    	videoW.setAudioEnabled(false);
+    	videoW.setPreviewPos(20, true);
+	}
+
+	return videoW;
+}
+
+function createGeneTab(width, height, x, y, petriDish) {
 
 	var w = new MultiWidgets.ImageWidget();
 
@@ -836,11 +873,190 @@ function createGeneTab(width, height, x, y) {
 
 	w.load("tab3new.png");
 
+	w.textBox = createGeneBox(4 * w.width() / 5, 2 * w.height() / 3, w.width() / 10, w.height() / 4, petriDish);
+
+	w.addChild(w.textBox);
+	w.textBox.raiseToTop();
+
 	return w;
 
 }
 
-function createTabbedPanel(width, height, x, y) {
+function createGeneBox(width, height, x, y, petriDish) {
+
+	var w = new MultiWidgets.TextWidget();
+
+	w.setWidth(width);
+	w.setHeight(height);
+	w.setLocation(x, y);
+	w.setBackgroundColor(0, 0, 0, 0);
+	w.setFontSize(18);
+	w.setStrokeWidth(1);
+	w.setFixed();
+	w.setAllowRotation(false);
+	w.setFontWeight(Stylish.FontWeight.FONT_WEIGHT_BOLD);
+	w.setFontFamily(["Roboto", "Verdana"]);
+	w.setColor(Radiant.Color.fromRGBA(53, 193, 214, 255));
+
+	w.geneDisplay = createGeneDisplay(w, w.width(), w.height(), 0, 0);
+	w.addChild(w.geneDisplay);
+	w.geneDisplay.raiseToTop();
+
+	w.geneText = createGeneText(w, w.width(), w.height(), 0, 0);
+
+	return w;
+
+}
+
+function createGeneText(box, width, height, x, y) {
+
+	var w = new MultiWidgets.TextWidget();
+
+	w.setWidth(width);
+	w.setHeight(height);
+	w.setLocation(x, y);
+	w.setBackgroundColor(1, 1, 1, 1);
+	w.setFontSize(18);
+	w.setStrokeWidth(1);
+	w.setText("Something");
+	w.setFixed();
+	w.setAllowRotation(false);
+	w.setFontWeight(Stylish.FontWeight.FONT_WEIGHT_BOLD);
+	w.setFontFamily(["Roboto", "Verdana"]);
+	w.setColor(Radiant.Color.fromRGBA(53, 193, 214, 255));
+
+	w.exitButton = createGeneExitButton(box, w.width() / 5, w.height() / 5, w.width() - w.width() / 5, 0);
+	w.addChild(w.exitButton);
+	w.exitButton.raiseToTop();
+
+	return w;
+
+}
+
+function createGeneButton(box, width, height, x, y, gene) {
+	var w = new MultiWidgets.JavaScriptWidget();
+
+	w.setWidth(buttonW);
+	w.setHeight(buttonH);
+	w.setFixed();
+	w.setLocation(x, y);
+	w.setBackgroundColor(1, 1, 1, 1);
+
+	w.image = new MultiWidgets.ImageWidget();
+
+	if (w.image.load(icons[gene])) {
+    	w.image.resizeToFit(new Nimble.SizeF(w.width(), w.height()));
+    	w.image.setFixed();
+    	w.image.setAutoRaiseToTop(false);
+    	w.addChild(w.image);
+    	w.image.raiseToTop();
+	}
+
+	w.image.onSingleTap(function() {
+		box.geneText.setText(geneInfo[gene]);
+		box.addChild(box.geneText);
+		box.geneText.raiseToTop();
+	});
+
+	return w;
+}
+
+function createGeneExitButton(box, width, height, x, y) {
+	var w = new MultiWidgets.JavaScriptWidget();
+
+	w.setWidth(buttonW);
+	w.setHeight(buttonH);
+	w.setFixed();
+	w.setLocation(x, y);
+	w.setBackgroundColor(0.5, 0.5, 0.5, 0.5);
+
+	w.image = new MultiWidgets.ImageWidget();
+
+	if (w.image.load("clear.png")) {
+    	w.image.resizeToFit(new Nimble.SizeF(w.width(), w.height()));
+    	w.image.setFixed();
+    	w.image.setAutoRaiseToTop(false);
+    	w.addChild(w.image);
+    	w.image.raiseToTop();
+	}
+
+	w.image.onSingleTap(function() {
+		box.removeChild(box.geneText);
+	});
+
+	return w;
+}
+
+function createGeneDisplay(box, width, height, x, y) {
+	var w = new MultiWidgets.JavaScriptWidget();
+
+	w.setWidth(width);
+	w.setHeight(height);
+	w.setFixed();
+	w.setLocation(x, y);
+	w.setBackgroundColor(1, 1, 0.5, 0);
+
+	w.geneButtons = [];
+
+	for (var i = 0; i < 3; i++) {
+		w.geneButtons[i] = createGeneButton(box, w.width() / 5, w.height() / 5, w.width() / 20 + i * w.width() / 3, w.height() / 20, i);
+		w.addChild(w.geneButtons[i]);
+		w.geneButtons[i].raiseToTop();
+	}
+
+	for (var i = 3; i < 7; i++) {
+		w.geneButtons[i] = createGeneButton(box, w.width() / 5, w.height() / 5, w.width() / 100 + (i - 3) * w.width() / 4, w.height() / 20 + w.height() / 3, i);
+		w.addChild(w.geneButtons[i]);
+		w.geneButtons[i].raiseToTop();
+	}
+
+	for (var i = 7; i < 10; i++) {
+		w.geneButtons[i] = createGeneButton(box, w.width() / 5, w.height() / 5, w.width() / 20 + (i - 7) * w.width() / 3, w.height() / 20 + 2 * w.height() / 3, i);
+		w.addChild(w.geneButtons[i]);
+		w.geneButtons[i].raiseToTop();
+	}
+
+	console.log("CREATED GENE DISPLAY");
+
+	return w;
+}
+
+function createTwoGenePanel(box, width, height, x, y, gene1, gene2) {
+	var w = new MultiWidgets.JavaScriptWidget();
+
+	w.setWidth(width);
+	w.setHeight(height);
+	w.setFixed();
+	w.setLocation(x, y);
+	w.setBackgroundColor(1, 1, 0.5, 0);
+
+	w.textW = new MultiWidgets.TextWidget();
+
+	w.textW.setWidth(w.width());
+	w.textW.setHeight(2 * w.height() / 3);
+	w.textW.setLocation(0, 0);
+	w.textW.setBackgroundColor(1, 1, 1, 0);
+	w.textW.setFontSize(18);
+	w.textW.setText("If " + genes[gene1] + ", this bacteria " + genes[gene2] + ". Click on each gene to learn more about it!");
+	w.textW.setStrokeWidth(1);
+	w.textW.setFixed();
+	w.textW.setAllowRotation(false);
+	w.textW.setFontWeight(Stylish.FontWeight.FONT_WEIGHT_BOLD);
+	w.textW.setFontFamily(["Roboto", "Verdana"]);
+	w.textW.setColor(Radiant.Color.fromRGBA(53, 193, 214, 255));
+
+	w.addChild(w.textW);
+
+	w.gene1 = createGeneButton(box, w.width()/ 5, w.height() / 5, w.width() / 4, 3 * w.height() / 4, gene1);
+	w.gene2 = createGeneButton(box, w.width()/ 5, w.height() / 5, 2 * w.width() / 3, 3 * w.height() / 4, gene2);
+
+	w.addChild(w.gene1);
+	w.addChild(w.gene2);
+
+	return w;
+}
+
+function createTabbedPanel(width, height, x, y, petriDish) {
 
 	var w = new MultiWidgets.JavaScriptWidget();
 
@@ -853,7 +1069,7 @@ function createTabbedPanel(width, height, x, y) {
 
 	w.infoTab = createInstructionTab(width, height, 0, 0);
 	w.videoTab = createVideoTab(width, height, 0, 0);
-	w.iGEMTab = createGeneTab(width, height, 0, 0);
+	w.iGEMTab = createGeneTab(width, height, 0, 0, petriDish);
 
 	w.navigationOverlay = createNavigationOverlay(w, w.width(), w.height() / 5, 0, 0);
 
@@ -915,7 +1131,6 @@ function createButtonOverlay(width, height, x, y, parent, tab) {
 
 function createPlasmidTransform(petriDish, width, height, x, y) {
 
-
 	var w = new MultiWidgets.JavaScriptWidget();
 
 	w.setWidth(3 * width / 5);
@@ -952,7 +1167,6 @@ function createPlasmidTransform(petriDish, width, height, x, y) {
 }
 
 function createPlasmidShrink(petriDish, width, height, x, y) {
-
 
 	var w = new MultiWidgets.JavaScriptWidget();
 
@@ -1009,12 +1223,18 @@ function plasmidInserted(w) {
 	w.tip.infoTab.textBox.setText(w.tip.infoTab.textBox.messages[4]);
 	if (w.tip.infoTab.textBox.hasChild(w.tip.infoTab.textBox.nextButton)) w.tip.infoTab.textBox.removeChild(w.tip.infoTab.textBox.nextButton);
 
+	if (w.tip.infoTab.textBox.hasChild(w.tip.infoTab.textBox.restartButton)) w.tip.infoTab.textBox.removeChild(w.tip.infoTab.textBox.restartButton);
+
+	w.tip.iGEMTab.textBox.removeChild(w.tip.iGEMTab.textBox.geneDisplay);
+	w.tip.iGEMTab.textBox.geneDisplay = createTwoGenePanel(w.tip.iGEMTab.textBox, w.tip.iGEMTab.textBox.width(), w.tip.iGEMTab.textBox.height(), 0, 0, w.ifGene - 1, w.thenGene - 1);
+	w.tip.iGEMTab.textBox.addChild(w.tip.iGEMTab.textBox.geneDisplay);
+	w.tip.iGEMTab.textBox.geneDisplay.raiseToTop();
+
+
 	w.removeChild(w.plasmidIndication);
 	w.removeChild(w.markerSensor);
 
 	w.bacBabe = createBacBabe(w, w.width() / 2, w.height() / 2, w.width() / 4, w.height() / 4, colors[w.thenGene - 6]);
-
-	//w.bacBabe.color = colors[w.thenGene - 6];
 
 	var plasmidTransform = createPlasmidTransform(w, w.width(), w.height(), 0, 0);
 	w.addChild(plasmidTransform);
@@ -1031,6 +1251,12 @@ function plasmidCleared(w) {
 
 	w.bacBabe.animation.setLocation(0, 0);
 
+	w.tip.iGEMTab.textBox.removeChild(w.tip.iGEMTab.textBox.geneDisplay);
+	w.tip.iGEMTab.textBox.geneDisplay = createGeneDisplay(w.tip.iGEMTab.textBox, w.tip.iGEMTab.textBox.width(), w.tip.iGEMTab.textBox.height(), 0, 0);
+	w.tip.iGEMTab.textBox.addChild(w.tip.iGEMTab.textBox.geneDisplay);
+	w.tip.iGEMTab.textBox.geneDisplay.raiseToTop();
+	console.log("right after it should have been added");
+
 	w.removeChild(w.clearButton);
 	w.removeChild(w.infoButton);
 	w.removeChild(w.bacBabe);
@@ -1043,9 +1269,7 @@ function plasmidCleared(w) {
 	}
 
 	if (w.hasChild(w.textW)) w.removeChild(w.textW);
-	if (!w.hasChild(w.tip)) w.addChild(w.tip);
 
-	w.tip.raiseToTop();
 	w.hasPlasmid = false;
 	w.ifGene = null;
 	w.thenGene = null;
@@ -1060,6 +1284,8 @@ function clearInfoText(w) {
 	w.tip.infoTab.textBox.status = 0;
 	w.tip.infoTab.textBox.addChild(w.tip.infoTab.textBox.nextButton);
 	w.tip.infoTab.textBox.setText(w.tip.infoTab.textBox.messages[0]);
+
+	w.tip.iGEMTab.removeChild(w.tip.iGEMTab.textBox);
 }
 
 function resetFlask(w, petriDish) {
