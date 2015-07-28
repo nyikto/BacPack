@@ -322,7 +322,8 @@ function createPetriDish(x, y, rotation, flaskSide) {
 		w.clearButton = createClearButton(w, petriDishW / 3 - buttonW / 2, - buttonH / 2);
 	}
 
-	w.bacBabe = createBacBabe(w, w.width() / 2, w.height() / 2, w.width() / 4, w.height() / 4);
+	//w.bacBabe = createBacBabe(w, w.width() / 2, w.height() / 2, w.width() / 4, w.height() / 4);
+	w.bacBabe = null;
 
 	w.addChild(w.tip);
 	w.tip.raiseToTop();
@@ -399,6 +400,7 @@ function createClearButton(petriDish, x, y) {
 
 	w.image.onSingleTap(function() {
 		plasmidCleared(petriDish);
+		clearInfoText(petriDish);
 	});
 
 	return w;
@@ -460,7 +462,7 @@ function createPlasmidIndication(width, height, x, y) {
 	return w;
 }
 
-function createBacBabe(petriDish, width, height, x, y) {
+function createBacBabe(petriDish, width, height, x, y, color) {
 
 	var w = new MultiWidgets.JavaScriptWidget();
 
@@ -470,11 +472,11 @@ function createBacBabe(petriDish, width, height, x, y) {
 	w.setLocation(x, y);
 	w.setBackgroundColor(0, 0, 0, 0);
 
-	w.color = null;
+	w.color = color;
 
 	w.animation = new MultiWidgets.ImageMovieWidget();
 
-	if (w.animation.load("dishidle")) {
+	if (w.animation.load(w.color + "/loop")) {
 	 	w.animation.addOperator(new MultiWidgets.StayInsideParentOperator());
 	    w.animation.setWidth(w.width());
 		w.animation.setHeight(w.height());
@@ -482,7 +484,7 @@ function createBacBabe(petriDish, width, height, x, y) {
     	w.animation.setFixed();
     	w.animation.raiseInputFlags(MultiWidgets.Widget.InputFlags.INPUT_TRANSLATE);
     	w.animation.setLoopMode(MultiWidgets.ImageMovieWidget.LoopMode.LOOPING);
-    	w.animation.setFPS(3);
+    	w.animation.setFPS(10);
     	w.addChild(w.animation);
     	w.animation.raiseToTop();
     	w.animation.play();
@@ -669,8 +671,7 @@ function createInstructionBox(width, height, x, y) {
 	w.setHeight(height);
 	w.setLocation(x, y);
 	w.setBackgroundColor(0, 0, 0, 0);
-	w.setFontSize(20);
-	w.setText("This is some example text that I am writing right now to see if the scroll can work.");
+	w.setFontSize(18);
 	w.setStrokeWidth(1);
 	w.setFixed();
 	w.setAllowRotation(false);
@@ -678,9 +679,129 @@ function createInstructionBox(width, height, x, y) {
 	w.setFontFamily(["Roboto", "Verdana"]);
 	w.setColor(Radiant.Color.fromRGBA(53, 193, 214, 255));
 
+	w.nextButton = createNextButton(w, w.width() / 4, w.height() / 7, w.width() - w.width() / 4, w.height() - w.height() / 7);
+
+	w.restartButton = createRestartButton(w, w.width() / 2, w.height() / 4, w.width() / 4, w.height() - w.height() / 3);
+
+	w.addChild(w.nextButton);
+	w.nextButton.raiseToTop();
+
+	w.status = 0;
+
+	w.messages = [
+	"You are a scientist helping explorers on space missions. Design and build useful bacteria and deploy them to Mars!",
+	"Play with the different genes to engineer bacteria that can produce useful supplies for the astronauts.",
+	"Deploy the bacteria to Mars and check the status bar to see how your bacteria are helping the astronauts!",
+	"To get started, place the genes you pick on the petri dish!",
+	"You made a plasmid! Now the bacteria will have the genes you picked!",
+	"Drag your bacteria into the flask!",
+	"Your bacteria has multiplied! Drag the flask to Mars!",
+	"Your bacteria was successfully deployed on Mars. Good job!"
+	];
+
+
+	w.setText(w.messages[0]);
+
 	return w;
 
 	// w.scroll = new MultiWidgets.ScrollAreaWidget();
+}
+
+function createNextButton(box, width, height, x, y) {
+
+	var w = new MultiWidgets.JavaScriptWidget();
+
+	w.setWidth(width);
+	w.setHeight(height);
+	w.setLocation(x, y);
+	w.setFixed();
+	w.setBackgroundColor(0, 0, 0, 0);
+
+	w.textW = new MultiWidgets.TextWidget();
+
+	w.textW.setWidth(w.width());
+	w.textW.setHeight(w.height());
+	w.textW.setLocation(0, 0);
+	w.textW.setColor(1, 1, 1, 1);
+	w.textW.setFontSize(15);
+	w.textW.setText("Next>>");
+	w.textW.setStrokeWidth(1);
+	w.textW.setFixed();
+	w.textW.setFontWeight(Stylish.FontWeight.FONT_WEIGHT_BOLD);
+	w.textW.setFontFamily(["Roboto", "Verdana"]);
+	w.textW.setBackgroundColor(Radiant.Color.fromRGBA(53, 193, 214, 255));
+
+	w.addChild(w.textW);
+	w.textW.raiseToTop();
+
+	w.delta = 0.0009;
+
+	w.box = box;
+
+	w.onUpdate(function(frameInfo) {
+		w.setScale(w.scale() + w.delta);
+		if (w.scale() >= 1.02 || w.scale() <= 0.98) {
+			w.delta = -w.delta;
+		} 
+	});
+
+	w.textW.onSingleTap(function() {
+		console.log("next tapped");
+		w.box.status++;
+		w.box.setText(w.box.messages[w.box.status]);
+		if (w.box.status == 3) w.box.removeChild(w);
+	});
+
+	return w;
+}
+
+
+function createRestartButton(box, width, height, x, y) {
+
+	var w = new MultiWidgets.JavaScriptWidget();
+
+	w.setWidth(width);
+	w.setHeight(height);
+	w.setLocation(x, y);
+	w.setFixed();
+	w.setBackgroundColor(0, 0, 0, 0);
+
+	w.textW = new MultiWidgets.TextWidget();
+
+	w.textW.setWidth(w.width());
+	w.textW.setHeight(w.height());
+	w.textW.setLocation(0, 0);
+	w.textW.setColor(1, 1, 1, 1);
+	w.textW.setFontSize(20);
+	w.textW.setText("Start Over");
+	w.textW.setStrokeWidth(1);
+	w.textW.setFixed();
+	w.textW.setFontWeight(Stylish.FontWeight.FONT_WEIGHT_BOLD);
+	w.textW.setFontFamily(["Roboto", "Verdana"]);
+	w.textW.setBackgroundColor(Radiant.Color.fromRGBA(53, 193, 214, 255));
+
+	w.addChild(w.textW);
+	w.textW.raiseToTop();
+
+	w.delta = 0.0009;
+
+	w.box = box;
+
+	w.onUpdate(function(frameInfo) {
+		w.setScale(w.scale() + w.delta);
+		if (w.scale() >= 1.02 || w.scale() <= 0.98) {
+			w.delta = -w.delta;
+		} 
+	});
+
+	w.textW.onSingleTap(function() {
+		w.box.status = 0;
+		w.box.setText(w.box.messages[w.box.status]);
+		w.box.removeChild(w);
+		w.box.addChild(w.box.nextButton);
+	});
+
+	return w;
 }
 
 function createVideoTab(width, height, x, y) {
@@ -843,7 +964,7 @@ function createPlasmidShrink(petriDish, width, height, x, y) {
 
 	w.animation = new MultiWidgets.ImageMovieWidget();
 
-	if (w.animation.load(petriDish.bacBabe.color + "/shrink")) {
+	if (w.animation.load(petriDish.bacBabe.color + "/enter")) {
 	    w.animation.setWidth(w.width());
 		w.animation.setHeight(w.height());
     	w.animation.setAutoRaiseToTop(false);
@@ -869,6 +990,9 @@ function createPlasmidShrink(petriDish, width, height, x, y) {
 
 			petriDish.addChild(petriDish.flask);
 			petriDish.flask.raiseToTop();
+
+			//drag bac to flask
+			petriDish.tip.infoTab.textBox.setText(petriDish.tip.infoTab.textBox.messages[5]);
 		}
 	});
 
@@ -881,10 +1005,16 @@ function createPlasmidShrink(petriDish, width, height, x, y) {
 
 function plasmidInserted(w) {
 
+	w.tip.infoTab.textBox.status = 4;
+	w.tip.infoTab.textBox.setText(w.tip.infoTab.textBox.messages[4]);
+	if (w.tip.infoTab.textBox.hasChild(w.tip.infoTab.textBox.nextButton)) w.tip.infoTab.textBox.removeChild(w.tip.infoTab.textBox.nextButton);
+
 	w.removeChild(w.plasmidIndication);
 	w.removeChild(w.markerSensor);
 
-	w.bacBabe.color = colors[w.thenGene - 6];
+	w.bacBabe = createBacBabe(w, w.width() / 2, w.height() / 2, w.width() / 4, w.height() / 4, colors[w.thenGene - 6]);
+
+	//w.bacBabe.color = colors[w.thenGene - 6];
 
 	var plasmidTransform = createPlasmidTransform(w, w.width(), w.height(), 0, 0);
 	w.addChild(plasmidTransform);
@@ -926,6 +1056,12 @@ function plasmidCleared(w) {
 	w.markers = [];
 }
 
+function clearInfoText(w) {
+	w.tip.infoTab.textBox.status = 0;
+	w.tip.infoTab.textBox.addChild(w.tip.infoTab.textBox.nextButton);
+	w.tip.infoTab.textBox.setText(w.tip.infoTab.textBox.messages[0]);
+}
+
 function resetFlask(w, petriDish) {
 	w.status = 0;
 	w.animation.load("MARSempty");
@@ -948,9 +1084,10 @@ function idleFlask(w, petriDish) {
 		w.animation.setLoopMode(MultiWidgets.ImageMovieWidget.LoopMode.LOOPING);
 		w.animation.raiseInputFlags(MultiWidgets.Widget.InputFlags.INPUT_TRANSLATE);
 	}
-	// petriDish.tip.image.load("bubble3.png");
-	// petriDish.addChild(petriDish.tip);
-	// petriDish.tip.raiseToTop();
+
+	//multiplied - drag to mars
+	petriDish.tip.infoTab.textBox.setText(petriDish.tip.infoTab.textBox.messages[6]);
+
 	w.status = 2;
 }
 
@@ -1012,16 +1149,18 @@ function emptyFlask(w, petriDish) {
 		w.animation.setFixed();
 		w.animation.setRotationAboutCenter(0);
 	}
-	// petriDish.tip.image.load("bubble4.png");
-	// petriDish.addChild(petriDish.tip);
-	// petriDish.tip.raiseToTop();
+
+	//successfully deployed
+	petriDish.tip.infoTab.textBox.setText(petriDish.tip.infoTab.textBox.messages[7]);
+	petriDish.tip.infoTab.textBox.addChild(petriDish.tip.infoTab.textBox.restartButton);
+
 
 	w.addChild(w.partGlow);
 	petriDish.bacBabe.animation.raiseInputFlags(MultiWidgets.Widget.InputFlags.INPUT_TRANSLATE);
 }
 
 function changeStatusBar(n, delta) {
-	statusGlows[n].play(false);
+	if (delta > 0) statusGlows[n].play(false);
 	statusLevels[n] += delta;
 	if (statusLevels[n] < 0) statusLevels[n] = 0;
 	if (statusLevels[n] > 100) statusLevels[n] = 100;
