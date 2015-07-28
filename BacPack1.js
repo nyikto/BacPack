@@ -61,6 +61,19 @@ const statusNeeds = [
 "fuel"
 ]
 
+const geneNames = [
+"carbon dioxide",
+"solar energy",
+"soil",
+"ice",
+"waste",
+"oxygen",
+"water",
+"food",
+"heat",
+"fuel"
+];
+
 const colors = [
 "Teal",
 "Purple",
@@ -80,6 +93,32 @@ const icons = [
 "icons/food.png",
 "icons/heat.png",
 "icons/fuel.png",
+]
+
+const icons_text = [
+"icons_text/CO2.png",
+"icons_text/light.png",
+"icons_text/soil.png",
+"icons_text/ice.png",
+"icons_text/waste.png",
+"icons_text/O2.png",
+"icons_text/water.png",
+"icons_text/food.png",
+"icons_text/heat.png",
+"icons_text/fuel.png",
+]
+
+const icons_text_white = [
+"icons_text_white/CO2.png",
+"icons_text_white/light.png",
+"icons_text_white/soil.png",
+"icons_text_white/ice.png",
+"icons_text_white/waste.png",
+"icons_text_white/O2.png",
+"icons_text_white/water.png",
+"icons_text_white/food.png",
+"icons_text_white/heat.png",
+"icons_text_white/fuel.png",
 ]
 
 const geneInfo = [
@@ -121,11 +160,11 @@ for (var i = 0; i < statusLevels.length; i++) {
 }
 
 var resourceIcons = [
-	createResourceIcon(rootW / 2 - iconW, rootH / 7, iconW, iconH, icons[0]),	
-	createResourceIcon(rootW / 3 - iconW, rootH / 7, iconW, iconH, icons[1]),
-	createResourceIcon(5 * rootW / 12 - iconW, 2 * rootH / 7, iconW, iconH, icons[2]),	
-	createResourceIcon(7 * rootW / 12 - iconW, 2 * rootH / 7, iconW, iconH, icons[3]),		
-	createResourceIcon(2 * rootW / 3 - iconW, rootH / 7, iconW, iconH, icons[4])	
+	createResourceIcon(rootW / 2 - iconW, rootH / 7, iconW, iconH, icons_text[0]),	
+	createResourceIcon(rootW / 3 - iconW, rootH / 7, iconW, iconH, icons_text[1]),
+	createResourceIcon(5 * rootW / 12 - iconW, 2 * rootH / 7, iconW, iconH, icons_text[2]),	
+	createResourceIcon(7 * rootW / 12 - iconW, 2 * rootH / 7, iconW, iconH, icons_text[3]),		
+	createResourceIcon(2 * rootW / 3 - iconW, rootH / 7, iconW, iconH, icons_text[4])	
 ];
 
 for (var i = 0; i < resourceIcons.length; i++) {
@@ -670,7 +709,7 @@ function createInstructionTab(width, height, x, y) {
 	w.resizeToFit(new Nimble.SizeF(w.width(), w.height()));
    	w.setAutoRaiseToTop(false);
 
-	w.load("tab1new.png");
+	w.load("tab1.png");
 
 	w.textBox = createInstructionBox(4 * w.width() / 5, 2 * w.height() / 3, w.width() / 10, w.height() / 4);
 
@@ -689,20 +728,25 @@ function createInstructionBox(width, height, x, y) {
 	w.setHeight(height);
 	w.setLocation(x, y);
 	w.setBackgroundColor(0, 0, 0, 0);
-	w.setFontSize(18);
+	w.setFontSize(17);
 	w.setStrokeWidth(1);
 	w.setFixed();
 	w.setAllowRotation(false);
 	w.setFontWeight(Stylish.FontWeight.FONT_WEIGHT_BOLD);
 	w.setFontFamily(["Roboto", "Verdana"]);
-	w.setColor(Radiant.Color.fromRGBA(53, 193, 214, 255));
+	w.setColor(Radiant.Color.fromRGBA(38, 198, 215, 255));
+	w.setTextAlign(MultiWidgets.TextWidget.TextAlign.TEXT_ALIGN_HCENTER);
 
-	w.nextButton = createNextButton(w, w.width() / 4, w.height() / 7, w.width() - w.width() / 4, w.height() - w.height() / 7);
-
-	w.restartButton = createRestartButton(w, w.width() / 2, w.height() / 4, w.width() / 4, w.height() - w.height() / 3);
-
+	w.nextButton = createNextButton(w, 14 * w.width() / 50, w.height() / 7, w.width() - w.width() / 4, w.height() - w.height() / 7);
 	w.addChild(w.nextButton);
 	w.nextButton.raiseToTop();
+
+	w.previousButton = createPreviousButton(w, 14 * w.width() / 50, w.height() / 7, 0, w.height() - w.height() / 7);
+	// w.addChild(w.previousButton);
+	// w.previousButton.raiseToTop();
+
+
+	w.restartButton = createRestartButton(w, w.width() / 2, w.height() / 4, w.width() / 4, w.height() - w.height() / 3);
 
 	w.status = 0;
 
@@ -747,7 +791,7 @@ function createNextButton(box, width, height, x, y) {
 	w.textW.setFixed();
 	w.textW.setFontWeight(Stylish.FontWeight.FONT_WEIGHT_BOLD);
 	w.textW.setFontFamily(["Roboto", "Verdana"]);
-	w.textW.setBackgroundColor(Radiant.Color.fromRGBA(53, 193, 214, 255));
+	w.textW.setBackgroundColor(Radiant.Color.fromRGBA(38, 198, 218, 255));
 
 	w.addChild(w.textW);
 	w.textW.raiseToTop();
@@ -767,6 +811,55 @@ function createNextButton(box, width, height, x, y) {
 		w.box.status++;
 		w.box.setText(w.box.messages[w.box.status]);
 		if (w.box.status == 3) w.box.removeChild(w);
+		if (w.box.status == 1) w.box.addChild(w.box.previousButton);
+	});
+
+	return w;
+}
+
+function createPreviousButton(box, width, height, x, y) {
+
+	var w = new MultiWidgets.JavaScriptWidget();
+
+	w.setWidth(width);
+	w.setHeight(height);
+	w.setLocation(x, y);
+	w.setFixed();
+	w.setBackgroundColor(0, 0, 0, 0);
+
+	w.textW = new MultiWidgets.TextWidget();
+
+	w.textW.setWidth(w.width());
+	w.textW.setHeight(w.height());
+	w.textW.setLocation(0, 0);
+	w.textW.setColor(1, 1, 1, 1);
+	w.textW.setFontSize(15);
+	w.textW.setText("<<Back");
+	w.textW.setStrokeWidth(1);
+	w.textW.setFixed();
+	w.textW.setFontWeight(Stylish.FontWeight.FONT_WEIGHT_BOLD);
+	w.textW.setFontFamily(["Roboto", "Verdana"]);
+	w.textW.setBackgroundColor(Radiant.Color.fromRGBA(38, 198, 218, 255));
+
+	w.addChild(w.textW);
+	w.textW.raiseToTop();
+
+	w.delta = 0.0009;
+
+	w.box = box;
+
+	// w.onUpdate(function(frameInfo) {
+	// 	w.setScale(w.scale() + w.delta);
+	// 	if (w.scale() >= 1.02 || w.scale() <= 0.98) {
+	// 		w.delta = -w.delta;
+	// 	} 
+	// });
+
+	w.textW.onSingleTap(function() {
+		w.box.status--;
+		w.box.setText(w.box.messages[w.box.status]);
+		if (w.box.status == 0) w.box.removeChild(w);
+		if (w.box.status == 3 && !w.box.hasChild(w.box.nextButton)) w.box.addChild(w.box.nextButton);
 	});
 
 	return w;
@@ -833,7 +926,7 @@ function createVideoTab(width, height, x, y) {
 	w.resizeToFit(new Nimble.SizeF(w.width(), w.height()));
    	w.setAutoRaiseToTop(false);
 
-	w.load("tab2new.png");
+	w.load("tab2.png");
 
 	w.video = createVideoBox(5 * w.width() / 6, w.height() / 2, w.width() / 12, 14.5 * w.height() / 40);
 	w.addChild(w.video);
@@ -871,9 +964,9 @@ function createGeneTab(width, height, x, y, petriDish) {
 	w.resizeToFit(new Nimble.SizeF(w.width(), w.height()));
    	w.setAutoRaiseToTop(false);
 
-	w.load("tab3new.png");
+	w.load("tab3.png");
 
-	w.textBox = createGeneBox(4 * w.width() / 5, 2 * w.height() / 3, w.width() / 10, w.height() / 4, petriDish);
+	w.textBox = createGeneBox(4 * w.width() / 5, 2 * w.height() / 3, w.width() / 12, w.height() / 4, petriDish);
 
 	w.addChild(w.textBox);
 	w.textBox.raiseToTop();
@@ -916,7 +1009,7 @@ function createGeneText(box, width, height, x, y) {
 	w.setHeight(height);
 	w.setLocation(x, y);
 	w.setBackgroundColor(1, 1, 1, 1);
-	w.setFontSize(18);
+	w.setFontSize(17);
 	w.setStrokeWidth(1);
 	w.setText("Something");
 	w.setFixed();
@@ -944,7 +1037,7 @@ function createGeneButton(box, width, height, x, y, gene) {
 
 	w.image = new MultiWidgets.ImageWidget();
 
-	if (w.image.load(icons[gene])) {
+	if (w.image.load(icons_text_white[gene])) {
     	w.image.resizeToFit(new Nimble.SizeF(w.width(), w.height()));
     	w.image.setFixed();
     	w.image.setAutoRaiseToTop(false);
@@ -994,24 +1087,35 @@ function createGeneDisplay(box, width, height, x, y) {
 	w.setHeight(height);
 	w.setFixed();
 	w.setLocation(x, y);
-	w.setBackgroundColor(1, 1, 0.5, 0);
+	w.setBackgroundColor(1, 1, 1, 0);
+
+	w.textW = new MultiWidgets.TextWidget();
+
+	w.textW.setWidth(w.width());
+	w.textW.setHeight(w.height() / 4);
+	w.textW.setLocation(0, 0);
+	w.textW.setBackgroundColor(1, 1, 1, 0);
+	w.textW.setFontSize(18);
+	w.textW.setText("Tap on a gene to learn more about it!");
+	w.textW.setStrokeWidth(1);
+	w.textW.setFixed();
+	w.textW.setFontWeight(Stylish.FontWeight.FONT_WEIGHT_BOLD);
+	w.textW.setFontFamily(["Roboto", "Verdana"]);
+	w.textW.setColor(Radiant.Color.fromRGBA(38, 198, 218, 255));
+	w.textW.setTextAlign(MultiWidgets.TextWidget.TextAlign.TEXT_ALIGN_HCENTER);
+
+	w.addChild(w.textW);
 
 	w.geneButtons = [];
 
-	for (var i = 0; i < 3; i++) {
-		w.geneButtons[i] = createGeneButton(box, w.width() / 5, w.height() / 5, w.width() / 20 + i * w.width() / 3, w.height() / 20, i);
+	for (var i = 0; i < 5; i++) {
+		w.geneButtons[i] = createGeneButton(box, w.width() / 14, w.height() / 14, i * (33 * w.width() / 160), w.height() / 3, i);
 		w.addChild(w.geneButtons[i]);
 		w.geneButtons[i].raiseToTop();
 	}
 
-	for (var i = 3; i < 7; i++) {
-		w.geneButtons[i] = createGeneButton(box, w.width() / 5, w.height() / 5, w.width() / 100 + (i - 3) * w.width() / 4, w.height() / 20 + w.height() / 3, i);
-		w.addChild(w.geneButtons[i]);
-		w.geneButtons[i].raiseToTop();
-	}
-
-	for (var i = 7; i < 10; i++) {
-		w.geneButtons[i] = createGeneButton(box, w.width() / 5, w.height() / 5, w.width() / 20 + (i - 7) * w.width() / 3, w.height() / 20 + 2 * w.height() / 3, i);
+	for (var i = 5; i < 10; i++) {
+		w.geneButtons[i] = createGeneButton(box, w.width() / 14, w.height() / 14, (i - 5) * (33 * w.width() / 160), 2 * w.height() / 3, i);
 		w.addChild(w.geneButtons[i]);
 		w.geneButtons[i].raiseToTop();
 	}
@@ -1037,18 +1141,19 @@ function createTwoGenePanel(box, width, height, x, y, gene1, gene2) {
 	w.textW.setLocation(0, 0);
 	w.textW.setBackgroundColor(1, 1, 1, 0);
 	w.textW.setFontSize(18);
-	w.textW.setText("If " + genes[gene1] + ", this bacteria " + genes[gene2] + ". Click on each gene to learn more about it!");
+	w.textW.setText("If " + genes[gene1] + ", this bacteria " + genes[gene2] + ". Tap on a gene to learn about it!");
 	w.textW.setStrokeWidth(1);
 	w.textW.setFixed();
 	w.textW.setAllowRotation(false);
 	w.textW.setFontWeight(Stylish.FontWeight.FONT_WEIGHT_BOLD);
 	w.textW.setFontFamily(["Roboto", "Verdana"]);
-	w.textW.setColor(Radiant.Color.fromRGBA(53, 193, 214, 255));
+	w.textW.setColor(Radiant.Color.fromRGBA(38, 198, 218, 255));
+	w.textW.setTextAlign(MultiWidgets.TextWidget.TextAlign.TEXT_ALIGN_HCENTER);
 
 	w.addChild(w.textW);
 
-	w.gene1 = createGeneButton(box, w.width()/ 5, w.height() / 5, w.width() / 4, 3 * w.height() / 4, gene1);
-	w.gene2 = createGeneButton(box, w.width()/ 5, w.height() / 5, 2 * w.width() / 3, 3 * w.height() / 4, gene2);
+	w.gene1 = createGeneButton(box, w.width()/ 5, w.height() / 5, w.width() / 4, 2 * w.height() / 3, gene1);
+	w.gene2 = createGeneButton(box, w.width()/ 5, w.height() / 5, 2 * w.width() / 3, 2 * w.height() / 3, gene2);
 
 	w.addChild(w.gene1);
 	w.addChild(w.gene2);
@@ -1196,11 +1301,11 @@ function createPlasmidShrink(petriDish, width, height, x, y) {
 			petriDish.addChild(petriDish.bacBabe);
 			petriDish.bacBabe.raiseToTop();
 
-			petriDish.addChild(petriDish.clearButton);
-			petriDish.clearButton.raiseToTop();
+			// petriDish.addChild(petriDish.clearButton);
+			// petriDish.clearButton.raiseToTop();
 
-			petriDish.addChild(petriDish.infoButton);
-			petriDish.infoButton.raiseToTop();
+			// petriDish.addChild(petriDish.infoButton);
+			// petriDish.infoButton.raiseToTop();
 
 			petriDish.addChild(petriDish.flask);
 			petriDish.flask.raiseToTop();
@@ -1222,7 +1327,7 @@ function plasmidInserted(w) {
 	w.tip.infoTab.textBox.status = 4;
 	w.tip.infoTab.textBox.setText(w.tip.infoTab.textBox.messages[4]);
 	if (w.tip.infoTab.textBox.hasChild(w.tip.infoTab.textBox.nextButton)) w.tip.infoTab.textBox.removeChild(w.tip.infoTab.textBox.nextButton);
-
+	if (w.tip.infoTab.textBox.hasChild(w.tip.infoTab.textBox.previousButton)) w.tip.infoTab.textBox.removeChild(w.tip.infoTab.textBox.previousButton);
 	if (w.tip.infoTab.textBox.hasChild(w.tip.infoTab.textBox.restartButton)) w.tip.infoTab.textBox.removeChild(w.tip.infoTab.textBox.restartButton);
 
 	w.tip.iGEMTab.textBox.removeChild(w.tip.iGEMTab.textBox.geneDisplay);
