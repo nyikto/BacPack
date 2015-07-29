@@ -947,7 +947,7 @@ function createVideoBox(width, height, x, y) {
 
 	var videoW = new MultiWidgets.VideoWidget();
 
-	if (videoW.load("iGEM.mp4")) {
+	if (videoW.load("iGEM2.mp4")) {
     	videoW.resizeToFit(new Nimble.SizeF(width, height));
     	videoW.setLocation(x, y);
     	videoW.setFixed();
@@ -1359,6 +1359,7 @@ function plasmidInserted(w) {
 	w.tip.iGEMTab.textBox.geneDisplay = createTwoGenePanel(w.tip.iGEMTab.textBox, w.tip.iGEMTab.textBox.width(), w.tip.iGEMTab.textBox.height(), 0, 0, w.ifGene - 1, w.thenGene - 1);
 	w.tip.iGEMTab.textBox.addChild(w.tip.iGEMTab.textBox.geneDisplay);
 	w.tip.iGEMTab.textBox.geneDisplay.raiseToTop();
+	if (w.tip.iGEMTab.textBox.hasChild(w.tip.iGEMTab.textBox.geneText)) w.tip.iGEMTab.textBox.removeChild(w.tip.iGEMTab.textBox.geneText);
 
 
 	w.removeChild(w.plasmidIndication);
@@ -1385,6 +1386,8 @@ function plasmidCleared(w) {
 	w.tip.iGEMTab.textBox.geneDisplay = createGeneDisplay(w.tip.iGEMTab.textBox, w.tip.iGEMTab.textBox.width(), w.tip.iGEMTab.textBox.height(), 0, 0);
 	w.tip.iGEMTab.textBox.addChild(w.tip.iGEMTab.textBox.geneDisplay);
 	w.tip.iGEMTab.textBox.geneDisplay.raiseToTop();
+
+	if (w.tip.iGEMTab.textBox.hasChild(w.tip.iGEMTab.textBox.geneText)) w.tip.iGEMTab.textBox.removeChild(w.tip.iGEMTab.textBox.geneText);
 
 	w.removeChild(w.clearButton);
 	w.removeChild(w.infoButton);
