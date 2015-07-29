@@ -123,15 +123,15 @@ const icons_text_white = [
 
 const geneInfo = [
 "The Bielefeld-CeBiTe 2014 iGEM team worked with Carbon Dioxide-sensing genes from Cyanobacteria.",
-"The Brown-Stanford 2011 iGEM team worked with solar energy genes from Cyanobacteria.",
+"\nThe Brown-Stanford 2011 iGEM team worked with solar energy genes from Cyanobacteria.",
 "The BCCS-Bristol 2010 iGEM team worked with a nitrate sensor for soil found in the prokaryote Nitrosomonas Europaea.",
 "The NTU_Taiwan 2013 iGEM team worked with cold-shock protein promoter genes found naturally in some strains of E. Coli bacteria.",
 "The Alberta 2011 iGEM team worked with waste processing genes found in the mold Neurospora Crassa.",
-"Genes used in oxygen production occur naturally in Cyanobacteria and algae.",
-"Genes used in water production can be found in some Hot Spring Bacteria",
+"\nGenes used in oxygen production occur naturally in Cyanobacteria and algae.",
+"\nGenes used in water production can be found in some Hot Spring Bacteria",
 "The SDU-Denmark 2014 iGEM team worked with food-production protein that they created inside E. Coli cells.",
 "The Valencia 2008 iGEM team worked with temperature increasing bacteria called UCP1 (termogenin).",
-"The Rutgers 2012 iGEM team worked with a biofuel producing mutant strain of E. Coli."
+"\nThe Rutgers 2012 iGEM team worked with a biofuel producing mutant strain of E. Coli."
 ]
 
 //---------------------------------------------------------------------------
@@ -287,7 +287,7 @@ function createStatusGlow(n, x, y) {
 		w.setHeight(statusBarH * 3);
 		w.setFixed();
 		w.setBackgroundColor(0, 0, 0, 0);
-		w.setFPS(30);
+		w.setFPS(15);
 		w.setLoopMode(MultiWidgets.ImageMovieWidget.LoopMode.NO_LOOP);
 	}
 
@@ -620,6 +620,10 @@ function createFlask(petriDish, width, height, x, y, xySwapped) {
 		}
 
 		if (w.status == 3 && !w.animation.isPlaying()) {
+			vanishFlask(w, petriDish);
+		}
+
+		if (w.status == 4 && !w.animation.isPlaying()) {
 			emptyFlask(w, petriDish);
 			plasmidCleared(petriDish);
 		}
@@ -741,12 +745,12 @@ function createInstructionBox(width, height, x, y) {
 	w.addChild(w.nextButton);
 	w.nextButton.raiseToTop();
 
-	w.previousButton = createPreviousButton(w, 14 * w.width() / 50, w.height() / 7, 0, w.height() - w.height() / 7);
+	w.previousButton = createPreviousButton(w, 14 * w.width() / 50, w.height() / 7, - w.height() / 25, w.height() - w.height() / 7);
 	// w.addChild(w.previousButton);
 	// w.previousButton.raiseToTop();
 
 
-	w.restartButton = createRestartButton(w, w.width() / 2, w.height() / 4, w.width() / 4, w.height() - w.height() / 3);
+	w.restartButton = createRestartButton(w, w.width() / 2, w.height() / 5, w.width() / 4, w.height() - w.height() / 3);
 
 	w.status = 0;
 
@@ -754,11 +758,11 @@ function createInstructionBox(width, height, x, y) {
 	"You are a scientist helping explorers on space missions. Design and build useful bacteria and deploy them to Mars!",
 	"Play with the different genes to engineer bacteria that can produce useful supplies for the astronauts.",
 	"Deploy the bacteria to Mars and check the status bar to see how your bacteria are helping the astronauts!",
-	"To get started, place the genes you pick on the petri dish!",
-	"You made a plasmid! Now the bacteria will have the genes you picked!",
-	"Drag your bacteria into the flask!",
-	"Your bacteria has multiplied! Drag the flask to Mars!",
-	"Your bacteria was successfully deployed on Mars. Good job!"
+	"\n\nTo get started, place the genes you pick on the petri dish!",
+	"\n\nYou made a plasmid! Now the bacteria will have the genes you picked!",
+	"\n\nDrag your bacteria into the flask!",
+	"\n\nYour bacteria has multiplied! Drag the flask to Mars!",
+	"\nYour bacteria was successfully deployed on Mars. Good job!"
 	];
 
 
@@ -802,7 +806,7 @@ function createNextButton(box, width, height, x, y) {
 
 	w.onUpdate(function(frameInfo) {
 		w.setScale(w.scale() + w.delta);
-		if (w.scale() >= 1.02 || w.scale() <= 0.98) {
+		if (w.scale() >= 1.01 || w.scale() <= 0.98) {
 			w.delta = -w.delta;
 		} 
 	});
@@ -846,6 +850,8 @@ function createPreviousButton(box, width, height, x, y) {
 
 	w.delta = 0.0009;
 
+	w.setScale(0.99);
+
 	w.box = box;
 
 	// w.onUpdate(function(frameInfo) {
@@ -882,7 +888,7 @@ function createRestartButton(box, width, height, x, y) {
 	w.textW.setHeight(w.height());
 	w.textW.setLocation(0, 0);
 	w.textW.setColor(1, 1, 1, 1);
-	w.textW.setFontSize(20);
+	w.textW.setFontSize(21);
 	w.textW.setText("Start Over");
 	w.textW.setStrokeWidth(1);
 	w.textW.setFixed();
@@ -995,7 +1001,7 @@ function createGeneBox(width, height, x, y, petriDish) {
 	w.addChild(w.geneDisplay);
 	w.geneDisplay.raiseToTop();
 
-	w.geneText = createGeneText(w, w.width(), w.height(), 0, 0);
+	w.geneText = createGeneText(w, w.width(), w.height(), 0, w.height() / 50);
 
 	return w;
 
@@ -1009,16 +1015,17 @@ function createGeneText(box, width, height, x, y) {
 	w.setHeight(height);
 	w.setLocation(x, y);
 	w.setBackgroundColor(1, 1, 1, 1);
-	w.setFontSize(17);
+	w.setFontSize(16);
 	w.setStrokeWidth(1);
 	w.setText("Something");
 	w.setFixed();
 	w.setAllowRotation(false);
 	w.setFontWeight(Stylish.FontWeight.FONT_WEIGHT_BOLD);
 	w.setFontFamily(["Roboto", "Verdana"]);
-	w.setColor(Radiant.Color.fromRGBA(53, 193, 214, 255));
+	w.setColor(Radiant.Color.fromRGBA(38, 198, 218, 255));
+	w.setTextAlign(MultiWidgets.TextWidget.TextAlign.TEXT_ALIGN_HCENTER);
 
-	w.exitButton = createGeneExitButton(box, w.width() / 5, w.height() / 5, w.width() - w.width() / 5, 0);
+	w.exitButton = createGeneOkayButton(box, w.width() / 4, w.height() / 6, w.width() / 2 - w.width() / 8, w.height() - w.height() / 6);
 	w.addChild(w.exitButton);
 	w.exitButton.raiseToTop();
 
@@ -1054,26 +1061,45 @@ function createGeneButton(box, width, height, x, y, gene) {
 	return w;
 }
 
-function createGeneExitButton(box, width, height, x, y) {
+function createGeneOkayButton(box, width, height, x, y) {
+
 	var w = new MultiWidgets.JavaScriptWidget();
 
-	w.setWidth(buttonW);
-	w.setHeight(buttonH);
-	w.setFixed();
+	w.setWidth(width);
+	w.setHeight(height);
 	w.setLocation(x, y);
-	w.setBackgroundColor(0.5, 0.5, 0.5, 0.5);
+	w.setFixed();
+	w.setBackgroundColor(0, 0, 0, 0);
 
-	w.image = new MultiWidgets.ImageWidget();
+	w.textW = new MultiWidgets.TextWidget();
 
-	if (w.image.load("clear.png")) {
-    	w.image.resizeToFit(new Nimble.SizeF(w.width(), w.height()));
-    	w.image.setFixed();
-    	w.image.setAutoRaiseToTop(false);
-    	w.addChild(w.image);
-    	w.image.raiseToTop();
-	}
+	w.textW.setWidth(w.width());
+	w.textW.setHeight(w.height());
+	w.textW.setLocation(0, 0);
+	w.textW.setColor(1, 1, 1, 1);
+	w.textW.setFontSize(16);
+	w.textW.setText("Okay!");
+	w.textW.setStrokeWidth(1);
+	w.textW.setFixed();
+	w.textW.setFontWeight(Stylish.FontWeight.FONT_WEIGHT_BOLD);
+	w.textW.setFontFamily(["Roboto", "Verdana"]);
+	w.textW.setBackgroundColor(Radiant.Color.fromRGBA(38, 198, 218, 255));
 
-	w.image.onSingleTap(function() {
+	w.addChild(w.textW);
+	w.textW.raiseToTop();
+
+	w.delta = 0.0009;
+
+	w.box = box;
+
+	w.onUpdate(function(frameInfo) {
+		w.setScale(w.scale() + w.delta);
+		if (w.scale() >= 1.01 || w.scale() <= 0.98) {
+			w.delta = -w.delta;
+		} 
+	});
+
+	w.textW.onSingleTap(function() {
 		box.removeChild(box.geneText);
 	});
 
@@ -1120,7 +1146,6 @@ function createGeneDisplay(box, width, height, x, y) {
 		w.geneButtons[i].raiseToTop();
 	}
 
-	console.log("CREATED GENE DISPLAY");
 
 	return w;
 }
@@ -1360,7 +1385,6 @@ function plasmidCleared(w) {
 	w.tip.iGEMTab.textBox.geneDisplay = createGeneDisplay(w.tip.iGEMTab.textBox, w.tip.iGEMTab.textBox.width(), w.tip.iGEMTab.textBox.height(), 0, 0);
 	w.tip.iGEMTab.textBox.addChild(w.tip.iGEMTab.textBox.geneDisplay);
 	w.tip.iGEMTab.textBox.geneDisplay.raiseToTop();
-	console.log("right after it should have been added");
 
 	w.removeChild(w.clearButton);
 	w.removeChild(w.infoButton);
@@ -1423,6 +1447,7 @@ function idleFlask(w, petriDish) {
 }
 
 function pourFlask(w, petriDish) {
+
 	var dist, initialRotation;
 
 	if (w.xySwapped == 1) {
@@ -1464,6 +1489,19 @@ function pourFlask(w, petriDish) {
 
 		// petriDish.removeChild(petriDish.tip);
 	}
+}
+
+function vanishFlask(w, petriDish) {
+	if (w.animation.load("vanish")) {
+			w.animation.raiseToTop();
+			w.animation.play(false);
+			w.animation.setLoopMode(MultiWidgets.ImageMovieWidget.LoopMode.NO_LOOP);
+			w.setLocation(w.x() + w.animation.x(), w.y() + w.animation.y());
+			w.animation.setLocation(0, 0);
+			w.animation.setFixed();
+			w.animation.setScale(1.1);
+	}
+	w.status = 4;
 }
 
 function emptyFlask(w, petriDish) {
