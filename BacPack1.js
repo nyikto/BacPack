@@ -31,10 +31,8 @@ const iconH = 80;
 const marsBacW = 60;
 const marsBacH = 60;
 
-const environmentImage = "backgroundnewSTATUS.png";
+const environmentImage = "background.png";
 const petriDishImage = "dish.png";
-const infoTabImage = "marsinst.jpeg";
-const iGEMTabImage = "iGEM.png";
 
 const distanceToMarsCenter = 642;
 const distanceToEdge = rootW / 80;
@@ -281,7 +279,7 @@ function createStatusBarRectangle(n, x, y) {
 function createStatusGlow(n, x, y) {
 	var w = new MultiWidgets.ImageMovieWidget();
 
-	if (w.load("marsStatusGlow2")) {
+	if (w.load("statusGlow")) {
 		w.setLocation(x - (1 * statusBarW / 8), y - statusBarH);
 		w.setWidth(statusBarW * 1.3);
 		w.setHeight(statusBarH * 3);
@@ -634,7 +632,7 @@ function createFlask(petriDish, width, height, x, y, xySwapped) {
 
 }
 
-function createMarsBacteria(width, height, resource, color) {
+function createMarsBacteria(width, height, resource, produce, color) {
 
 	var w = new MultiWidgets.JavaScriptWidget();
 
@@ -656,16 +654,28 @@ function createMarsBacteria(width, height, resource, color) {
 
 	w.image = new MultiWidgets.ImageMovieWidget();
 
-	if (w.image.load(color + "/surface")) {
+	w.status = 0;
+
+	if (w.image.load(color + "/appear")) {
 	    w.image.setWidth(w.width());
 		w.image.setHeight(w.height());
     	w.image.setAutoRaiseToTop(false);
     	w.image.setFixed();
-    	w.image.setLoopMode(MultiWidgets.ImageMovieWidget.LoopMode.LOOPING);
-    	w.image.setFPS(20);
+    	w.image.setLoopMode(MultiWidgets.ImageMovieWidget.LoopMode.NO_LOOP);
+    	w.image.setFPS(15);
     	w.addChild(w.image);
     	w.image.raiseToTop();
 	}
+
+	w.onUpdate(function(frameInfo){
+		if (w.status == 0 && !w.image.isPlaying()) {
+			w.status = 1;
+			w.image.load(color + "/surface");
+			w.image.setLoopMode(MultiWidgets.ImageMovieWidget.LoopMode.LOOPING);
+			w.image.play();
+			changeStatusBar(produce - 6, 10);
+		}
+	});
 
 	resourceIcon.filledSlots++;
 	resourceIcon.bacs[resourceIcon.openSlot] = w;
@@ -746,9 +756,6 @@ function createInstructionBox(width, height, x, y) {
 	w.nextButton.raiseToTop();
 
 	w.previousButton = createPreviousButton(w, 14 * w.width() / 50, w.height() / 7, - w.height() / 25, w.height() - w.height() / 7);
-	// w.addChild(w.previousButton);
-	// w.previousButton.raiseToTop();
-
 
 	w.restartButton = createRestartButton(w, w.width() / 2, w.height() / 5, w.width() / 4, w.height() - w.height() / 3);
 
@@ -854,13 +861,6 @@ function createPreviousButton(box, width, height, x, y) {
 
 	w.box = box;
 
-	// w.onUpdate(function(frameInfo) {
-	// 	w.setScale(w.scale() + w.delta);
-	// 	if (w.scale() >= 1.02 || w.scale() <= 0.98) {
-	// 		w.delta = -w.delta;
-	// 	} 
-	// });
-
 	w.textW.onSingleTap(function() {
 		w.box.status--;
 		w.box.setText(w.box.messages[w.box.status]);
@@ -947,7 +947,7 @@ function createVideoBox(width, height, x, y) {
 
 	var videoW = new MultiWidgets.VideoWidget();
 
-	if (videoW.load("iGEM2.mp4")) {
+	if (videoW.load("iGEM.mp4")) {
     	videoW.resizeToFit(new Nimble.SizeF(width, height));
     	videoW.setLocation(x, y);
     	videoW.setFixed();
@@ -1422,7 +1422,7 @@ function clearInfoText(w) {
 
 function resetFlask(w, petriDish) {
 	w.status = 0;
-	w.animation.load("MARSempty");
+	w.animation.load("flaskEmpty");
 	w.addChild(w.partGlow);
 }
 
@@ -1495,7 +1495,7 @@ function pourFlask(w, petriDish) {
 }
 
 function vanishFlask(w, petriDish) {
-	if (w.animation.load("vanish")) {
+	if (w.animation.load("flaskVanish")) {
 			w.animation.raiseToTop();
 			w.animation.play(false);
 			w.animation.setLoopMode(MultiWidgets.ImageMovieWidget.LoopMode.NO_LOOP);
@@ -1511,9 +1511,7 @@ function emptyFlask(w, petriDish) {
 
 	w.status = 0;
 
-	createMarsBacteria(marsBacW, marsBacH, petriDish.ifGene, petriDish.bacBabe.color);
-
-	changeStatusBar(petriDish.thenGene - 6, 10);
+	createMarsBacteria(marsBacW, marsBacH, petriDish.ifGene, petriDish.thenGene, petriDish.bacBabe.color);
 
 	if (w.animation.load("MARSempty")) {
 		w.setLocation(w.xOrig, w.yOrig);
@@ -1526,9 +1524,10 @@ function emptyFlask(w, petriDish) {
 	petriDish.tip.infoTab.textBox.setText(petriDish.tip.infoTab.textBox.messages[7]);
 	petriDish.tip.infoTab.textBox.addChild(petriDish.tip.infoTab.textBox.restartButton);
 
-
 	w.addChild(w.partGlow);
 	petriDish.bacBabe.animation.raiseInputFlags(MultiWidgets.Widget.InputFlags.INPUT_TRANSLATE);
+
+	// changeStatusBar(petriDish.thenGene - 6, 10);
 }
 
 function changeStatusBar(n, delta) {
