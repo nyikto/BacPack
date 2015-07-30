@@ -865,7 +865,7 @@ function createPreviousButton(box, width, height, x, y) {
 		w.box.status--;
 		w.box.setText(w.box.messages[w.box.status]);
 		if (w.box.status == 0) w.box.removeChild(w);
-		if (w.box.status == 3 && !w.box.hasChild(w.box.nextButton)) w.box.addChild(w.box.nextButton);
+		if (w.box.status == 2 && !w.box.hasChild(w.box.nextButton)) w.box.addChild(w.box.nextButton);
 	});
 
 	return w;
