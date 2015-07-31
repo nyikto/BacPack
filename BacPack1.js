@@ -1470,5 +1470,3 @@ function raiseOverlayButtonsToTop(navigationOverlay) {
 	navigationOverlay.videoButton.raiseToTop();
 	navigationOverlay.iGEMButton.raiseToTop();
 }
-
-
