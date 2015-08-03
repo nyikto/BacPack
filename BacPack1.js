@@ -279,7 +279,7 @@ function createStatusBarRectangle(n, x, y) {
 function createStatusGlow(n, x, y) {
 	var w = new MultiWidgets.ImageMovieWidget();
 
-	if (w.load("statusGlow")) {
+	if (w.load("saturatedStatusGlow")) {
 		w.setLocation(x - (1 * statusBarW / 8), y - statusBarH);
 		w.setWidth(statusBarW * 1.3);
 		w.setHeight(statusBarH * 3);
