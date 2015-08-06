@@ -1108,9 +1108,16 @@ function createGeneBox(width, height, x, y, petriDish) {
 }
 
 
-/**
- *
- *
+/** 
+ * Creates the gene information text for the gene tab.
+ * 
+ * @param box {TextWidget} the gene box for this gene text
+ * @param width {number} width of the gene text
+ * @param height {number} height of the gene text
+ * @param x {number} x-coordinate of the gene text
+ * @param y {number} y-coordinate of the gene text
+ * 
+ * @return {TextWidget} the gene information text
  */
 function createGeneText(box, width, height, x, y) {
 
@@ -1122,7 +1129,6 @@ function createGeneText(box, width, height, x, y) {
  w.setBackgroundColor(1, 1, 1, 1);
  w.setFontSize(16);
  w.setStrokeWidth(1);
- w.setText("Something");
  w.setFixed();
  w.setAllowRotation(false);
  w.setFontWeight(Stylish.FontWeight.FONT_WEIGHT_BOLD);
@@ -1139,9 +1145,17 @@ function createGeneText(box, width, height, x, y) {
 }
 
 
-/**
- *
- *
+/** 
+ * Creates a button with the icon of the specified gene.
+ * 
+ * @param box {TextWidget} the gene box for this button
+ * @param width {number} width of the button
+ * @param height {number} height of the button
+ * @param x {number} x-coordinate of the button
+ * @param y {number} y-coordinate of the button
+ * @param gene {number} the code for the gene
+ * 
+ * @return {JavaScriptWidget} the gene button
  */
 function createGeneButton(box, width, height, x, y, gene) {
  var w = new MultiWidgets.JavaScriptWidget();
@@ -1172,9 +1186,16 @@ function createGeneButton(box, width, height, x, y, gene) {
 }
 
 
-/**
- *
- *
+/** 
+ * Creates the okay button for the gene information text.
+ * 
+ * @param box {TextWidget} the text box for this button
+ * @param width {number} width of the button
+ * @param height {number} height of the button
+ * @param x {number} x-coordinate of the button
+ * @param y {number} y-coordinate of the button
+ * 
+ * @return {JavaScriptWidget} the okay button
  */
 function createGeneOkayButton(box, width, height, x, y) {
 
@@ -1222,9 +1243,16 @@ function createGeneOkayButton(box, width, height, x, y) {
 }
 
 
-/**
- *
- *
+/** 
+ * Creates a display of all available genes.
+ * 
+ * @param box {TextWidget} the text box for this gene display
+ * @param width {number} width of the display
+ * @param height {number} height of the display
+ * @param x {number} x-coordinate of the display
+ * @param y {number} y-coordinate of the display
+ * 
+ * @return {JavaScriptWidget} the gene display
  */
 function createGeneDisplay(box, width, height, x, y) {
  var w = new MultiWidgets.JavaScriptWidget();
@@ -1271,9 +1299,18 @@ function createGeneDisplay(box, width, height, x, y) {
 }
 
 
-/**
- *
- *
+/** 
+ * Creates a panel with the two specified genes.
+ * 
+ * @param box {TextWidget} the text box for this gene panel
+ * @param width {number} width of the panel
+ * @param height {number} height of the panel
+ * @param x {number} x-coordinate of the panel
+ * @param y {number} y-coordinate of the panel
+ * @param gene1 {number} code of the first gene
+ * @param gene2 {number} code of the second gene
+ * 
+ * @return {JavaScriptWidget} the gene panel
  */
 function createTwoGenePanel(box, width, height, x, y, gene1, gene2) {
  var w = new MultiWidgets.JavaScriptWidget();
@@ -1312,9 +1349,16 @@ function createTwoGenePanel(box, width, height, x, y, gene1, gene2) {
 }
 
 
-/**
- *
- *
+/** 
+ * Creates the side info tabs for the petri dish.
+ * 
+ * @param width {number} width of the side info
+ * @param height {number} height of the side info
+ * @param x {number} x-coordinate of the side info
+ * @param y {number} y-coordinate of the side info
+ * @param petriDish {JavaScriptWidget} the petri dish
+ * 
+ * @return {JavaScriptWidget} the side info tabs
  */
 function createTabbedPanel(width, height, x, y, petriDish) {
 
@@ -1345,9 +1389,16 @@ function createTabbedPanel(width, height, x, y, petriDish) {
 }
 
 
-/*
- *
- *
+/**
+ * Creates a transparent overlay with buttons over each tab of the panel.
+ * 
+ * @param tabbedPanel {JavaScriptWidget} the panel
+ * @param width {number} width of the overlay
+ * @param height {number} height of the overlay
+ * @param x {number} x-coordinate of the overlay
+ * @param y {number} y-coordinate of the overlay
+ * 
+ * @return {JavaScriptWidget} the overlay
  */
 function createNavigationOverlay(tabbedPanel, width, height, x, y) {
 
@@ -1377,9 +1428,17 @@ function createNavigationOverlay(tabbedPanel, width, height, x, y) {
 }
 
 
-/*
- *
- *
+/**
+ * Creates a transparent button as part of the navigation overlay.
+ * 
+ * @param width {number} width of the overlay
+ * @param height {number} height of the overlay
+ * @param x {number} x-coordinate of the overlay
+ * @param y {number} y-coordinate of the overlay
+ * @param parent {JavaScriptWidget} the navigation overlay this button belongs to
+ * @param tab {JavaScriptWidget} the side info tab that this button bring up
+ * 
+ * @return {JavaScriptWidget} the button
  */
 function createButtonOverlay(width, height, x, y, parent, tab) {
 
