@@ -1,10 +1,11 @@
-/*
+/**
  * BacPack1.js
+ * Summer 2015
+ * Prototype for BacPack for New Frontiers: Mars Environment
  * 
  * Notes:
  * "if", "if gene", "resource" are used interchangably
  * "then", "then gene", "output", "need", "produce" are used interchangably
- * 
  * 
  * @author Vivien Chen, Rachel Kwon, Sam Mincheva
  */
@@ -236,6 +237,7 @@ function createEnvironment() {
      w.image.raiseToTop();
  }
 
+ //randomly decreases status bar levels
  w.onUpdate(function(frameInfo) {
   for (var i = 0; i < statusLevels.length; i++) {
    if (Math.floor((Math.random() * 2500) + 1) == 1) {
@@ -270,6 +272,7 @@ function createResourceIcon(x, y, width, height, n) {
      w.raiseToTop();
  }
 
+ //array for where the bacteria go around the icon
  w.coordinates = [
   [- 9 * marsBacW / 10, - 9 * marsBacH / 10],
   [9 * marsBacW / 10, - 9 * marsBacH / 10],
@@ -309,6 +312,7 @@ function createStatusBarRectangle(n, x, y) {
 
  w.xOrig = x;
 
+ //updates the status bar animation
  w.onUpdate(function(frameInfo) {
   w.setWidth(statusBarW * (100 - statusLevels[n]) / 100);
   w.setX(w.xOrig + (statusBarW * (statusLevels[n]) / 100));
@@ -368,6 +372,7 @@ function createPetriDish(x, y, rotation, flaskSide) {
 
  w.flaskSide = flaskSide;
 
+ //based on the rotation of the flask; used for deployment math
  w.xySwapped;
  if (rotation == 0) {
   w.xySwapped = 0;
@@ -396,6 +401,7 @@ function createPetriDish(x, y, rotation, flaskSide) {
  w.addChild(w.plasmidIndication);
  w.plasmidIndication.raiseToTop();
 
+ //makes the flask and side info on different sides
  if (w.flaskSide == 0) {
   w.flask = createFlask(w, w.width() / 2, w.height() / 2, - w.width() / 2, 0, w.xySwapped);
   w.tip = createTabbedPanel(3 * w.width() / 4, 3 * w.height() / 4, w.width(), w.height() / 6, w);
@@ -439,12 +445,14 @@ function createMarkerSensor(w) {
 
  markerSensor.setBackgroundColor(1, 0, 0, 0);
 
+ //if a marker is added to the screen, adds it to the array
  markerSensor.onMarkerDown(function(id_as_string) {
   var idAsInt = parseInt(id_as_string);
   var gm = $.app.grabManager();
   var marker = gm.findMarker(idAsInt);
   w.markers.push(marker);
 
+  //checks if the marker array has a valid plasmid combination
   if (isValidPlasmid(w.markers)) {
    if (codeType(w.markers[0].code()) == 0) {
     w.ifGene = w.markers[0].code();
@@ -457,6 +465,7 @@ function createMarkerSensor(w) {
   }
  });
 
+ //if a marker is removed from the screen, removes it from the array
  markerSensor.onMarkerUp(function(id_as_string) {
   var idAsInt = parseInt(id_as_string);
   var gm = $.app.grabManager();
@@ -618,6 +627,7 @@ function createFlask(petriDish, width, height, x, y, xySwapped) {
  w.absoluteY = 0;
  w.newRotation = 0;
 
+ //updates the flask status continuously
  w.onUpdate(function(frameInfo) {
 
   if (w.status == 0 && petriDish.bacBabe.animation.intersects(w)) {
@@ -665,6 +675,7 @@ function createMarsBacteria(width, height, resource, produce, color) {
 
  var resourceIcon = resourceIcons[resource - 1];
  
+ //if the icon has no slots open, deletes the oldest bacteria
  if (resourceIcon.filledSlots == resourceIcon.coordinates.length) {
   resourceIcon.removeChild(resourceIcon.bacs[resourceIcon.firstAdded]);
   resourceIcon.openSlot = resourceIcon.firstAdded;
@@ -704,6 +715,7 @@ function createMarsBacteria(width, height, resource, produce, color) {
   }
  });
 
+ //updates the icon accordingly
  resourceIcon.filledSlots++;
  resourceIcon.bacs[resourceIcon.openSlot] = w;
  resourceIcon.openSlot = (resourceIcon.openSlot + 1) % resourceIcon.coordinates.length;
@@ -843,6 +855,7 @@ function createNextButton(box, width, height, x, y) {
 
  w.box = box;
 
+ //the button changes in size slightly
  w.onUpdate(function(frameInfo) {
   w.setScale(w.scale() + w.delta);
   if (w.scale() >= 1.01 || w.scale() <= 0.98) {
@@ -850,6 +863,7 @@ function createNextButton(box, width, height, x, y) {
   } 
  });
 
+ //when pressed, the next instruction is displayed
  w.textW.onSingleTap(function() {
   w.box.status++;
   w.box.setText(w.box.messages[w.box.status]);
@@ -905,6 +919,7 @@ function createPreviousButton(box, width, height, x, y) {
 
  w.box = box;
 
+ //when pressed, the previous instruction is displayed
  w.textW.onSingleTap(function() {
   w.box.status--;
   w.box.setText(w.box.messages[w.box.status]);
@@ -965,6 +980,7 @@ function createRestartButton(box, width, height, x, y) {
   } 
  });
 
+ //when pressed, the first instruction is displayed
  w.textW.onSingleTap(function() {
   w.box.status = 0;
   w.box.setText(w.box.messages[w.box.status]);
@@ -1176,6 +1192,7 @@ function createGeneButton(box, width, height, x, y, gene) {
      w.image.raiseToTop();
  }
 
+ //when pressed, the gene information box is displayed
  w.image.onSingleTap(function() {
   box.geneText.setText(geneInfo[gene]);
   box.addChild(box.geneText);
@@ -1228,6 +1245,7 @@ function createGeneOkayButton(box, width, height, x, y) {
 
  w.box = box;
 
+ //the button changes in size slightly
  w.onUpdate(function(frameInfo) {
   w.setScale(w.scale() + w.delta);
   if (w.scale() >= 1.01 || w.scale() <= 0.98) {
@@ -1235,6 +1253,7 @@ function createGeneOkayButton(box, width, height, x, y) {
   } 
  });
 
+ //when pressed, the gene information box is hidden
  w.textW.onSingleTap(function() {
   box.removeChild(box.geneText);
  });
@@ -1282,12 +1301,14 @@ function createGeneDisplay(box, width, height, x, y) {
 
  w.geneButtons = [];
 
+ //adds the first row of gene buttons
  for (var i = 0; i < 5; i++) {
   w.geneButtons[i] = createGeneButton(box, w.width() / 14, w.height() / 14, i * (33 * w.width() / 160), w.height() / 3, i);
   w.addChild(w.geneButtons[i]);
   w.geneButtons[i].raiseToTop();
  }
 
+ //adds the second row of gene buttons
  for (var i = 5; i < 10; i++) {
   w.geneButtons[i] = createGeneButton(box, w.width() / 14, w.height() / 14, (i - 5) * (33 * w.width() / 160), 2 * w.height() / 3, i);
   w.addChild(w.geneButtons[i]);
