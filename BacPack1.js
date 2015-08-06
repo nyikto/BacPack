@@ -1,6 +1,9 @@
 /*
  * BacPack1.js
  * 
+ * Notes:
+ * "if", "if gene", "resource" are used interchangably
+ * "then", "then gene", "output", "need", "produce" are used interchangably
  * 
  * 
  * @author Vivien Chen, Rachel Kwon, Sam Mincheva
@@ -505,8 +508,16 @@ function createPlasmidIndication(width, height, x, y) {
 
 
 /**
- *
- *
+ * Creates the bacterium in th especified petri dish.
+ * 
+ * @param petriDish {JavaScriptWidget} the petri dish
+ * @param width {number} width of the bacterium
+ * @param height {number} height of the bacterium
+ * @param x {number} x-coordinate of the bacterium
+ * @param y {number} y-coordinate of the bacterium
+ * @param color {string} path to the bacterium's animation
+ * 
+ * @return {JavaScriptWidget} the bacterium
  */
 function createBacBabe(petriDish, width, height, x, y, color) {
 
@@ -541,9 +552,17 @@ function createBacBabe(petriDish, width, height, x, y, color) {
 }
 
 
-/*
- *
- *
+/**
+ * Creates the flask of the specified petri dish.
+ * 
+ * @param petriDish {JavaScriptWidget} the petri dish
+ * @param width {number} width of the flask
+ * @param height {number} height of the flask
+ * @param x {number} x-coordinate of the flask
+ * @param y {number} y-coordinate of the flask
+ * @param xySwapped {number} indicates if the petriDish is rotated
+ * 
+ * @return {JavaScriptWidget} the flask
  */
 function createFlask(petriDish, width, height, x, y, xySwapped) {
 
@@ -629,9 +648,16 @@ function createFlask(petriDish, width, height, x, y, xySwapped) {
 }
 
 
-/*
+/** 
+ * Creates a cluster of Mars bacteria.
+ * 
+ * @param width {number} width of the bacteria
+ * @param height {number} height of the bacteria
+ * @param resource {number} the code of the bacteria's resource
+ * @param produce {number} the code of the bacteria's produce
+ * @param color {string} path to the bacteria's animation
  *
- *
+ * @return {JavaScriptWidget} the bacteria cluster
  */
 function createMarsBacteria(width, height, resource, produce, color) {
 
@@ -686,38 +712,7 @@ function createMarsBacteria(width, height, resource, produce, color) {
 }
 
 
-/*
- *
- *
- */
-function createTabButton(sideInfo, width, height, x, y, image, tab) {
-
- var w = new MultiWidgets.JavaScriptWidget();
-
- w.setWidth(buttonW);
- w.setHeight(buttonH);
- w.setFixed();
- w.setLocation(x, y);
- w.setBackgroundColor(0, 0, 0, 0);
-
- w.image = new MultiWidgets.ImageWidget();
-
- if (w.image.load(image)) {
-     w.image.resizeToFit(new Nimble.SizeF(w.width(), w.height()));
-     w.image.setFixed();
-     w.image.setAutoRaiseToTop(false);
-     w.addChild(w.image);
-     w.image.raiseToTop();
- }
-
- w.image.onSingleTap(function() {
-  tab.raiseToTop();
- });
-
- return w;
-}
-
-/*
+/** 
  *
  *
  */
@@ -745,7 +740,7 @@ function createInstructionTab(width, height, x, y) {
 }
 
 
-/*
+/**
  *
  *
  */
@@ -796,7 +791,7 @@ function createInstructionBox(width, height, x, y) {
 }
 
 
-/*
+/**
  *
  *
  */
@@ -849,7 +844,7 @@ function createNextButton(box, width, height, x, y) {
 }
 
 
-/*
+/**
  *
  *
  */
@@ -896,7 +891,8 @@ function createPreviousButton(box, width, height, x, y) {
  return w;
 }
 
-/*
+
+/**
  *
  *
  */
@@ -949,7 +945,7 @@ function createRestartButton(box, width, height, x, y) {
 }
 
 
-/*
+/**
  *
  *
  */
@@ -977,7 +973,7 @@ function createVideoTab(width, height, x, y) {
 }
 
 
-/*
+/**
  *
  *
  */
@@ -997,7 +993,7 @@ function createVideoBox(width, height, x, y) {
 }
 
 
-/*
+/**
  *
  *
  */
@@ -1025,7 +1021,7 @@ function createGeneTab(width, height, x, y, petriDish) {
 }
 
 
-/*
+/**
  *
  *
  */
@@ -1056,7 +1052,7 @@ function createGeneBox(width, height, x, y, petriDish) {
 }
 
 
-/*
+/**
  *
  *
  */
@@ -1087,7 +1083,7 @@ function createGeneText(box, width, height, x, y) {
 }
 
 
-/*
+/**
  *
  *
  */
@@ -1120,7 +1116,7 @@ function createGeneButton(box, width, height, x, y, gene) {
 }
 
 
-/*
+/**
  *
  *
  */
@@ -1170,7 +1166,7 @@ function createGeneOkayButton(box, width, height, x, y) {
 }
 
 
-/*
+/**
  *
  *
  */
@@ -1219,7 +1215,7 @@ function createGeneDisplay(box, width, height, x, y) {
 }
 
 
-/*
+/**
  *
  *
  */
@@ -1260,7 +1256,7 @@ function createTwoGenePanel(box, width, height, x, y, gene1, gene2) {
 }
 
 
-/*
+/**
  *
  *
  */
@@ -1440,9 +1436,11 @@ function createPlasmidShrink(petriDish, width, height, x, y) {
 //--------------------Helper Functions---------------------------------------
 
 
-/*
+/** 
+ * Updates the petri dish, flask, and bacteria upon a valid plasmid marker
+ * combination being placed of the screen.
  *
- *
+ * @param w {JavaScriptWidget} the petri dish being updated
  */
 function plasmidInserted(w) {
 
@@ -1474,9 +1472,11 @@ function plasmidInserted(w) {
 }
 
 
-/*
+/**
+ * Updates the petri dish, flask, and bacteria upon successfully sending 
+ * the bacteria to Mars and clearing the plasmid.
  *
- *
+ * @param w {JavaScriptWidget} the petri dish being updated
  */
 function plasmidCleared(w) {
  w.addChild(w.plasmidIndication);
@@ -1510,8 +1510,11 @@ function plasmidCleared(w) {
 }
 
 
-/*
- *
+/**
+ * Restarts the instruction text in the side info tab of the
+ * specified petri dish.
+ * 
+ * @param w {JavaScriptWidget} the petri dish
  *
  */
 function clearInfoText(w) {
@@ -1523,20 +1526,11 @@ function clearInfoText(w) {
 }
 
 
-/*
+/**
+ * Updates the flask to display the bacteria dividing.
  *
- *
- */
-function resetFlask(w, petriDish) {
- w.status = 0;
- w.animation.load("flaskEmpty");
- w.addChild(w.partGlow);
-}
-
-
-/*
- *
- *
+ * @param w {JavaScriptWidget} the flask
+ * @param petriDish {JavaScriptWidget} the petri dish
  */
 function divideFlask(w, petriDish) {
  if (w.animation.load(petriDish.bacBabe.color + "/divide")) {
@@ -1549,9 +1543,11 @@ function divideFlask(w, petriDish) {
 }
 
 
-/*
+/**
+ * Updates the flask to display the bacteria idly swimming in it.
  *
- *
+ * @param w {JavaScriptWidget} the flask
+ * @param petriDish {JavaScriptWidget} the petri dish
  */
 function idleFlask(w, petriDish) {
  if (w.animation.load(petriDish.bacBabe.color + "/idle")) {
@@ -1567,9 +1563,11 @@ function idleFlask(w, petriDish) {
 }
 
 
-/*
+/**
+ * Updates the flask to display the pouring to mars animation..
  *
- *
+ * @param w {JavaScriptWidget} the flask
+ * @param petriDish {JavaScriptWidget} the petri dish
  */
 function pourFlask(w, petriDish) {
 
@@ -1617,9 +1615,11 @@ function pourFlask(w, petriDish) {
 }
 
 
-/*
+/**
+ * Updates the flask to display the vanishing animation.
  *
- *
+ * @param w {JavaScriptWidget} the flask
+ * @param petriDish {JavaScriptWidget} the petri dish
  */
 function vanishFlask(w, petriDish) {
  if (w.animation.load("flaskVanish")) {
@@ -1636,8 +1636,10 @@ function vanishFlask(w, petriDish) {
 
 
 /**
- * Emtpies the flask.
+ * Updates the flask to go back to initial empty position.
  *
+ * @param w {JavaScriptWidget} the flask
+ * @param petriDish {JavaScriptWidget} the petri dish
  */
 function emptyFlask(w, petriDish) {
 
@@ -1682,7 +1684,7 @@ function changeStatusBar(n, delta) {
  * 
  * @param marks {array} the marker array to check
  * 
- * @return true if there's exactly one if gene and exactly one then gene; false otherwise
+ * @return {boolean} true if there's exactly one if gene and exactly one then gene; false otherwise
  */
 function isValidPlasmid(marks) {
  if (marks.length != 2) return false;
@@ -1718,7 +1720,7 @@ function codeType(code) {
  * @param x2 {number} the x-coordinate of the second point
  * @param y2 {number} the y-coordinate of the second point
  * 
- * @return the distance between the two points
+ * @return {number} the distance between the two points
  */
 function getDistanceBetween(x1, y1, x2, y2) {
  var xs = 0;
@@ -1738,7 +1740,7 @@ function getDistanceBetween(x1, y1, x2, y2) {
  * @param f1 {number} the first number
  * @param f2 {number} the second number
  * 
- * @return true if the difference between f1 and f2 is 
+ * @return {boolean} true if the difference between f1 and f2 is 
  * within the threshold; false otherwise
  */
 function areSameFloats(f1, f2) {
@@ -1750,7 +1752,7 @@ function areSameFloats(f1, f2) {
  * Returns the sign opposite of the one of the number specified.
  * 
  * @param n {number} the number to get the opposite sign of
- * @return -1 if n >= 0 and 1 if n < 0.
+ * @return {number} -1 if n >= 0 and 1 if n < 0.
  */
 function unsign(n) {
  return (n >= 0) ? -1 : 1;
