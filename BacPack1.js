@@ -713,8 +713,14 @@ function createMarsBacteria(width, height, resource, produce, color) {
 
 
 /** 
- *
- *
+ * Creates the instruction tab as part of the side info.
+ * 
+ * @param width {number} width of the instruction tab
+ * @param height {number} height of the instruction tab
+ * @param x {number} x-coordinate of the instruction tab
+ * @param y {number} y-coordinate of the instruction tab
+ * 
+ * @return {ImageWidget} the instruction tab
  */
 function createInstructionTab(width, height, x, y) {
 
@@ -945,9 +951,15 @@ function createRestartButton(box, width, height, x, y) {
 }
 
 
-/**
- *
- *
+/** 
+ * Creates the video tab as part of the side info.
+ * 
+ * @param width {number} width of the video tab
+ * @param height {number} height of the video tab
+ * @param x {number} x-coordinate of the video tab
+ * @param y {number} y-coordinate of the video tab
+ * 
+ * @return {ImageWidget} the video tab
  */
 function createVideoTab(width, height, x, y) {
 
@@ -993,9 +1005,16 @@ function createVideoBox(width, height, x, y) {
 }
 
 
-/**
- *
- *
+/** 
+ * Creates the gene information tab as part of the side info.
+ * 
+ * @param width {number} width of the gene tab
+ * @param height {number} height of the gene tab
+ * @param x {number} x-coordinate of the gene tab
+ * @param y {number} y-coordinate of the gene tab
+ * @param petriDish {JavaScriptWidget} the petri dish that tab is for
+ * 
+ * @return {ImageWidget} the gene tab
  */
 function createGeneTab(width, height, x, y, petriDish) {
 
