@@ -746,9 +746,15 @@ function createInstructionTab(width, height, x, y) {
 }
 
 
-/**
- *
- *
+/** 
+ * Creates the instruction text box for the instruction tab.
+ * 
+ * @param width {number} width of the instruction text
+ * @param height {number} height of the instruction text
+ * @param x {number} x-coordinate of the instruction text
+ * @param y {number} y-coordinate of the instruction text
+ * 
+ * @return {TextWidget} the instruction text box
  */
 function createInstructionBox(width, height, x, y) {
 
@@ -792,14 +798,19 @@ function createInstructionBox(width, height, x, y) {
  w.setText(w.messages[0]);
 
  return w;
-
- // w.scroll = new MultiWidgets.ScrollAreaWidget();
 }
 
 
-/**
- *
- *
+/** 
+ * Creates the next button for the instruction text.
+ * 
+ * @param box {TextWidget} the text box for this button
+ * @param width {number} width of the button
+ * @param height {number} height of the button
+ * @param x {number} x-coordinate of the button
+ * @param y {number} y-coordinate of the button
+ * 
+ * @return {JavaScriptWidget} the next button
  */
 function createNextButton(box, width, height, x, y) {
 
@@ -850,9 +861,16 @@ function createNextButton(box, width, height, x, y) {
 }
 
 
-/**
- *
- *
+/** 
+ * Creates the previous button for the instruction text.
+ * 
+ * @param box {TextWidget} the text box for this button
+ * @param width {number} width of the button
+ * @param height {number} height of the button
+ * @param x {number} x-coordinate of the button
+ * @param y {number} y-coordinate of the button
+ * 
+ * @return {JavaScriptWidget} the previous button
  */
 function createPreviousButton(box, width, height, x, y) {
 
@@ -898,9 +916,16 @@ function createPreviousButton(box, width, height, x, y) {
 }
 
 
-/**
- *
- *
+/** 
+ * Creates the restart button for the instruction text.
+ * 
+ * @param box {TextWidget} the text box for this button
+ * @param width {number} width of the button
+ * @param height {number} height of the button
+ * @param x {number} x-coordinate of the button
+ * @param y {number} y-coordinate of the button
+ * 
+ * @return {JavaScriptWidget} the restart button
  */
 function createRestartButton(box, width, height, x, y) {
 
@@ -981,13 +1006,18 @@ function createVideoTab(width, height, x, y) {
 
 
  return w;
-
 }
 
 
-/**
- *
- *
+/** 
+ * Creates the video for the video tab.
+ * 
+ * @param width {number} width of the video
+ * @param height {number} height of the video
+ * @param x {number} x-coordinate of the video
+ * @param y {number} y-coordinate of the video
+ * 
+ * @return {VideoWidget} the video
  */
 function createVideoBox(width, height, x, y) {
 
@@ -1040,9 +1070,16 @@ function createGeneTab(width, height, x, y, petriDish) {
 }
 
 
-/**
- *
- *
+/** 
+ * Creates the gene text box for the gene tab.
+ * 
+ * @param width {number} width of the gene text
+ * @param height {number} height of the gene text
+ * @param x {number} x-coordinate of the gene text
+ * @param y {number} y-coordinate of the gene text
+ * @param petriDish {JavaScriptWidget} the petri dish of that gene tab
+ * 
+ * @return {TextWidget} the gene text box
  */
 function createGeneBox(width, height, x, y, petriDish) {
 
@@ -1363,9 +1400,16 @@ function createButtonOverlay(width, height, x, y, parent, tab) {
 }
 
 
-/*
- *
- *
+/**
+ * Creates the transformation animation of the petri dish's plasmid.
+ * 
+ * @param petriDish {JavaScriptWidget} the petri dish
+ * @param width {number} width of the animation
+ * @param height {number} height of the animation
+ * @param x {number} x-coordinate of the animation
+ * @param y {number} y-coordinate of the animation
+ * 
+ * @return {JavaScriptWidget} the animation
  */
 function createPlasmidTransform(petriDish, width, height, x, y) {
 
@@ -1381,7 +1425,7 @@ function createPlasmidTransform(petriDish, width, height, x, y) {
 
  if (w.animation.load(petriDish.bacBabe.color + "/transform")) {
      w.animation.setWidth(w.width());
-  w.animation.setHeight(w.height());
+     w.animation.setHeight(w.height());
      w.animation.setAutoRaiseToTop(false);
      w.animation.setFixed();
      w.animation.setLoopMode(MultiWidgets.ImageMovieWidget.LoopMode.NO_LOOP);
@@ -1405,9 +1449,17 @@ function createPlasmidTransform(petriDish, width, height, x, y) {
 }
 
 
-/*
- *
- *
+
+/**
+ * Creates the shrinkign animation of the petri dish's plasmid.
+ * 
+ * @param petriDish {JavaScriptWidget} the petri dish
+ * @param width {number} width of the animation
+ * @param height {number} height of the animation
+ * @param x {number} x-coordinate of the animation
+ * @param y {number} y-coordinate of the animation
+ * 
+ * @return {JavaScriptWidget} the animation
  */
 function createPlasmidShrink(petriDish, width, height, x, y) {
 
@@ -1448,7 +1500,6 @@ function createPlasmidShrink(petriDish, width, height, x, y) {
  });
 
  return w;
-
 }
 
 //---------------------------------------------------------------------------
